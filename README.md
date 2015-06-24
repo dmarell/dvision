@@ -1,7 +1,7 @@
 # DVISION
 
-Spring Boot REST server implementing a motion detector for network cameras. Uses JavaCV/OpenCV. It handles
-virtually any number of network cameras in parallell.
+Spring Boot REST server implementing a motion detector for network cameras. Uses an image motion detection algorithm
+from JavaCV/OpenCV.
 
 ## API usage
 
@@ -34,7 +34,7 @@ Run the main method in the Application. It starts an embedded Tomcat on port 145
 
 Profile "local" is default:
 ``` 
-java -jar target/dvision-1-SNAPSHOT.jar
+java -jar target/dvision-server-1-SNAPSHOT.jar
 ``` 
 
 Profile "prod":
@@ -45,7 +45,8 @@ java -Dspring.profiles.active=prod -jar target/dvision-server-1-SNAPSHOT.jar
 Configuration for different profiles are in application.yaml.
 
 
-Captured images with detected motion are saved in directory "cams". Areas with motion are marked with green rectangles.
+Captured images with detected motion are saved in directory "cams". Areas with motion are marked with green 
+rectangles.
 
 ## Example request/response
 

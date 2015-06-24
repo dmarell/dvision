@@ -39,7 +39,7 @@
         <dependency>
             <groupId>se.marell.dvesta</groupId>
             <artifactId>dvesta</artifactId>
-            <version>1-SNAPSHOT</version>
+            <version>6</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
