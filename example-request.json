@@ -1,0 +1,18 @@
+{
+  "camera": {
+    "name": "cam1",
+    "url": "http://83.140.123.181/ImageHarvester/Images/556-slussen_panorama_1.jpg",
+    "username": "user1",
+    "password": "pass1"
+  },
+  "minAreaSize": 100,
+  "areaSizeThreshold": 10,
+  "detectionAreas": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 1024,
+      "height": 385
+    }
+  ]
+}

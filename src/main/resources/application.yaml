@@ -1,0 +1,30 @@
+motion-detection-service.image-output-directory: cams/cam-motion-grabber
+
+server:
+  port: 14562
+
+---
+
+spring:
+  profiles: local
+
+---
+
+spring:
+  profiles: autosmall
+
+---
+
+spring:
+  profiles: autolarge
+
+---
+
+spring:
+  profiles: man
+
+---
+
+spring:
+  profiles: prod
+motion-detection-service.image-output-directory: /mnt/catalina/public/cams/cam-motion-grabber

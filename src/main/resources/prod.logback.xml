@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <jmxConfigurator/>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>dvision.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>dvision-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--<appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+        <!--<remoteHost>elk</remoteHost>-->
+        <!--<port>42000</port>-->
+        <!--<encoder class="net.logstash.logback.encoder.LogstashEncoder" />-->
+        <!--<customFields>{"appname":"dvision-prod"}</customFields>-->
+    <!--</appender>-->
+
+    <logger name="se.marell.dvision" level="info"/>
+    <logger name="org.springframework" level="info"/>
+
+    <root level="warn">
+        <appender-ref ref="file"/>
+        <!--<appender-ref ref="logstash" />-->
+    </root>
+</configuration>
