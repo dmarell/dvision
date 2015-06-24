@@ -7,6 +7,6 @@
 # $4=deployment directory          /usr/local/dvision-server
 
 ssh -l bv83 $2 "cd $4;mv -f dvision-server.jar dvision-server.jar.old"
-scp target/dvision-server-$1.jar $3@$2:$4/dvision-server.jar
+scp dvision-server/target/dvision-server-$1.jar $3@$2:$4/dvision-server.jar
 
 #ssh -i <identity_file> -l <sudo_username> $2 "sudo service dvision-server restart"
