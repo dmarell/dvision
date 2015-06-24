@@ -24,6 +24,10 @@
         </dependencies>
     </dependencyManagement>
 
+    <properties>
+        <start-class>se.marell.dvision.server.Application</start-class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>se.marell.dvision</groupId>
