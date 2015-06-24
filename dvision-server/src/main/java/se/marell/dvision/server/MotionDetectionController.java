@@ -79,7 +79,7 @@ public class MotionDetectionController {
                 return null;
             }
         });
-        outputDirectory = new File(environment.getProperty("motion-detection-service.image-output-directory"));
+        outputDirectory = new File(environment.getRequiredProperty("dvision.outdirectory"));
     }
 
     public void setCaptureInterval(String cameraName, long durationMsec) {

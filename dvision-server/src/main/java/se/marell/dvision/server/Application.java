@@ -3,24 +3,18 @@ package se.marell.dvision.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import se.marell.dvesta.system.BuildInfo;
 import se.marell.dvesta.system.LogbackLoggerInitializer;
 import se.marell.dvesta.system.RunEnvironment;
 import se.marell.dvesta.system.SystemSpringConfig;
 
-@EnableAutoConfiguration
-@Configuration
-@ComponentScan
-@EnableWebSecurity
+@SpringBootApplication
 @EnableAsync
 @EnableScheduling
 @Import(SystemSpringConfig.class)

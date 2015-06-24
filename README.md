@@ -14,6 +14,8 @@ When you stop calling requestMotionDetection the camera will be garbage collecte
 requestMotionDetection again after this the camera will be unknown and Bad request will be received. In order to 
 start capturing this camera again requestMotionDetection has to be called again. 
 
+Spring Boot Actuator endpoints (/health, /shutdown etc) are activated on port 14563.
+
 ## Build and run
 
 Build with:
@@ -30,9 +32,18 @@ mvn -Pint-test verify
 
 Run the main method in the Application. It starts an embedded Tomcat on port 14562.
 
+Profile "local" is default:
 ``` 
 java -jar target/dvision-1-SNAPSHOT.jar
 ``` 
+
+Profile "prod":
+``` 
+java -Dspring.profiles.active=prod -jar target/dvision-server-1-SNAPSHOT.jar
+``` 
+
+Configuration for different profiles are in application.yaml.
+
 
 Captured images with detected motion are saved in directory "cams". Areas with motion are marked with green rectangles.
 
