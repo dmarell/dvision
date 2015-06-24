@@ -17,7 +17,7 @@ public class CameraController {
     private String imageName;
 
     @ResponseBody
-    @RequestMapping(name = "/image", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @RequestMapping(value = "/image", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getImage() throws IOException {
         if (imageName == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
