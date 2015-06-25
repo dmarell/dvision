@@ -14,6 +14,25 @@
         <module>dvision-server</module>
     </modules>
 
+    <scm>
+        <url>https://github.com/dmarell/dvision</url>
+        <connection>scm:git:git://github.com/dmarell/dvision.git</connection>
+        <developerConnection>scm:git:git@github.com:dmarell/dvision.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>marell.se nexus</name>
+            <url>http://marell.se/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment-snapshots</id>
+            <name>marell.se nexus snapshots</name>
+            <url>http://marell.se/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <pluginManagement>
             <plugins>
