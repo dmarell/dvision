@@ -5,11 +5,9 @@ package se.marell.dvision.server;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import se.marell.dcommons.time.TimeSource;
-import se.marell.dvesta.ioscan.IoScanSpringConfig;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,6 +20,7 @@ public class TestConfig {
 
     @Bean
     TimeSource timeSource() {
+        setTime("2015-06-20T12:00:00");
         return new TimeSource() {
             @Override
             public long currentTimeMillis() {

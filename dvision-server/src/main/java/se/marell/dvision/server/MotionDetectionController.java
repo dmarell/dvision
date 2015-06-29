@@ -3,17 +3,20 @@
  */
 package se.marell.dvision.server;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
+import se.marell.dcommons.time.DateUtils;
 import se.marell.dcommons.time.PassiveTimer;
 import se.marell.dcommons.time.TimeSource;
 import se.marell.dvision.api.*;
@@ -24,9 +27,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -40,19 +45,21 @@ public class MotionDetectionController {
     private class Slot {
         MotionDetectionRequest request;
         long lastRequestTimestamp;
-        PassiveTimer timer;
+        PassiveTimer captureTimer;
         Future<BufferedImage> image;
         MotionDetector detector;
-
+        CapturedImage previousImage;
         List<MotionDetectionResponse> responses = new ArrayList<>();
 
         public Slot(MotionDetectionRequest request) {
             this.request = request;
             lastRequestTimestamp = timeSource.currentTimeMillis();
-            timer = new PassiveTimer(request.getCamera().getCaptureRate() * 1000);
+            captureTimer = new PassiveTimer(request.getCamera().getCaptureRate() * 1000, timeSource);
             detector = new MotionDetector(request.getAreaSizeThreshold(), request.getDetectionAreas());
         }
     }
+
+    private DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
 
     private Map<String/*cameraName*/, Slot> slots = new HashMap<>();
 
@@ -63,6 +70,7 @@ public class MotionDetectionController {
     private Environment environment;
 
     private File outputDirectory;
+    private String baseUrl;
 
     @PostConstruct
     public void init() {
@@ -79,13 +87,14 @@ public class MotionDetectionController {
                 return null;
             }
         });
-        outputDirectory = new File(environment.getRequiredProperty("dvision.outdirectory"));
+        outputDirectory = new File(environment.getRequiredProperty("dvision.out-directory"));
+        baseUrl = environment.getRequiredProperty("motion-detection-service.baseurl");
     }
 
     public void setCaptureInterval(String cameraName, long durationMsec) {
         Slot slot = slots.get(cameraName);
         if (slot != null) {
-            slot.timer.restart(durationMsec);
+            slot.captureTimer.restart(durationMsec);
         }
     }
 
@@ -114,15 +123,15 @@ public class MotionDetectionController {
         log.debug("capture, slots: " + slots.size());
         removeUnusedCameraSlots();
         for (Slot slot : slots.values()) {
-            captureCamera(slot);
+            captureImage(slot);
         }
     }
 
-    private void captureCamera(Slot slot) {
-        log.info("captureCamera: " + slot.request.getCamera().getName());
+    private void captureImage(Slot slot) {
+        log.info("captureImage: " + slot.request.getCamera().getName());
         if (slot.image == null) {
-            if (slot.timer.hasExpired()) {
-                slot.timer.restart();
+            if (slot.captureTimer.hasExpired()) {
+                slot.captureTimer.restart();
                 try {
                     log.debug("Camera {}, grabbing image", slot.request.getCamera().getName());
                     slot.image = getImage(slot.request.getCamera());
@@ -143,16 +152,22 @@ public class MotionDetectionController {
             slot.image = null;
             List<ImageRectangle> areas = slot.detector.getMotionAreas(image);
             int areaSize = calcArea(areas);
+            final long millisNow = timeSource.currentTimeMillis();
+            LocalDateTime now = DateUtils.getLocalDateTime(millisNow);
+            String imageFilename = getDateTimeString(now) + "-" + slot.request.getCamera().getName() + ".png";
+            CapturedImage capturedImage = new CapturedImage(baseUrl + "/images/" + imageFilename, millisNow);
             if (areaSize >= slot.request.getMinAreaSize()) {
                 log.info("Detected motion, cam: {}, size: {}", slot.request.getCamera().getName(), areaSize);
                 drawMotionRectangles(image, areas);
-                saveCameraImage(slot.request.getCamera().getName(), image);
+                saveCameraImage(imageFilename, image, now);
                 slot.responses.add(new MotionDetectionResponse(
                         timeSource.currentTimeMillis(),
-                        new ImageSize(image.getWidth(), image.getHeight()), areas));
+                        new ImageSize(image.getWidth(), image.getHeight()), areas,
+                        Arrays.asList(slot.previousImage, capturedImage)));
             } else {
                 log.debug("Camera {}, no change in image", slot.request.getCamera().getName());
             }
+            slot.previousImage = capturedImage;
         } catch (InterruptedException | ExecutionException e) {
             log.error("Unexpected error", e);
         }
@@ -197,13 +212,12 @@ public class MotionDetectionController {
         return area;
     }
 
-    private void saveCameraImage(String cameraName, BufferedImage image) {
+    private void saveCameraImage(String imageFilename, BufferedImage image, LocalDateTime now) {
         try {
-            LocalDateTime now = LocalDateTime.now();
             File directory = getDirectory(now);
             directory.mkdirs();
             if (directory.exists() && directory.canWrite()) {
-                File outputfile = new File(directory, getDateTimeString(now) + "-" + cameraName + ".png");
+                File outputfile = new File(directory, imageFilename);
                 ImageIO.write(image, "png", outputfile);
             } else {
                 log.error("Failed to save image because output directory does not exist or is not writable: " + directory);
@@ -221,7 +235,7 @@ public class MotionDetectionController {
     }
 
     private String getDateTimeString(LocalDateTime now) {
-        return now.toString().replace("-", "").replace(":", "");
+        return now.format(df);
     }
 
     /**
@@ -240,16 +254,28 @@ public class MotionDetectionController {
         }
         slot.lastRequestTimestamp = timeSource.currentTimeMillis();
         ImageSize imageSize = null;
+        Set<CapturedImage> capturedImages = new TreeSet<>();
         List<ImageRectangle> allAreas = new ArrayList<>();
         for (MotionDetectionResponse r : slot.responses) {
             if (r.getTimestamp() >= since) {
                 allAreas.addAll(r.getAreas());
                 imageSize = r.getImageSize();
+                capturedImages.addAll(r.getImages());
             }
         }
         if (imageSize == null) {
             return null;
         }
-        return new MotionDetectionResponse(slot.lastRequestTimestamp / 1000, imageSize, allAreas);
+        return new MotionDetectionResponse(slot.lastRequestTimestamp / 1000, imageSize, allAreas, capturedImages);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/image/{imageName}", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable String imageName) throws IOException {
+        if (imageName == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        InputStream in = getClass().getResourceAsStream(outputDirectory + "/" + imageName);
+        return new ResponseEntity<>(IOUtils.toByteArray(in), HttpStatus.OK);
     }
 }

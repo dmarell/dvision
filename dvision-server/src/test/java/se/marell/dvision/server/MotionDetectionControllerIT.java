@@ -47,6 +47,9 @@ public class MotionDetectionControllerIT {
     @Autowired
     MotionDetectionController motionDetectorController;
 
+    @Autowired
+    TestConfig testConfig;
+
     @Test
     public void shouldDetectMotion() throws Exception {
         cameraStub.setImageName("/image1.png");
@@ -61,10 +64,16 @@ public class MotionDetectionControllerIT {
         assertThat(response, is(nullValue()));
         motionDetectorController.setCaptureInterval("cam1", 0);
         motionDetectorController.capture();
+        testConfig.setTime("2015-06-20T12:00:02");
         cameraStub.setImageName("/image2.png");
         motionDetectorController.capture();
+        testConfig.setTime("2015-06-20T12:00:04");
         response = service.getMotionDetections("cam1", 0).getBody();
         assertThat(response.getAreas().size(), greaterThan(0));
+        assertThat(response.getImages().get(0).getImageUrl(), is("http://localhost:14562/images/20150620120000-cam1.png"));
+        assertThat(response.getImages().get(1).getImageUrl(), is("http://localhost:14562/images/20150620120002-cam1.png"));
+        assertThat(response.getImages().size(), is(2));
+        //TODO check follow image URLs
     }
 
     @Test(expected = IOException.class)

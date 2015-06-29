@@ -23,4 +23,5 @@ spring.profiles: man
 
 spring.profiles: prod
 
-dvision.outdirectory: /mnt/catalina/public/cams/cam-motion-grabber
+dvision.out-directory: /mnt/catalina/public/cams/cam-motion-grabber
+motion-detection-service.baseurl: http://localhost:14562
