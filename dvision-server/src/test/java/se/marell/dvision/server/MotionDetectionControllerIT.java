@@ -19,7 +19,10 @@ import se.marell.dvision.api.NetworkCamera;
 import se.marell.dvision.client.DVisionSpringConfig;
 import se.marell.dvision.client.MotionDetectionService;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
@@ -52,7 +55,7 @@ public class MotionDetectionControllerIT {
 
     @Test
     public void shouldDetectMotion() throws Exception {
-        cameraStub.setImageName("/image1.png");
+        cameraStub.setImageSource("/image1.png");
         MotionDetectionService service = beanFactory.createBean(MotionDetectionService.class);
         MotionDetectionRequest request = new MotionDetectionRequest(
                 new NetworkCamera("cam1", "http://localhost:14562/image", CAPTURE_RATE_OFF),
@@ -65,15 +68,34 @@ public class MotionDetectionControllerIT {
         motionDetectorController.setCaptureInterval("cam1", 0);
         motionDetectorController.capture();
         testConfig.setTime("2015-06-20T12:00:02");
-        cameraStub.setImageName("/image2.png");
+        cameraStub.setImageSource("/image2.png");
         motionDetectorController.capture();
         testConfig.setTime("2015-06-20T12:00:04");
         response = service.getMotionDetections("cam1", 0).getBody();
         assertThat(response.getAreas().size(), greaterThan(0));
-        assertThat(response.getImages().get(0).getImageUrl(), is("http://localhost:14562/images/20150620120000-cam1.png"));
-        assertThat(response.getImages().get(1).getImageUrl(), is("http://localhost:14562/images/20150620120002-cam1.png"));
+        final String imageUrl0 = response.getImages().get(0).getImageUrl();
+        assertThat(imageUrl0, is("http://localhost:14562/images/20150620120000-cam1.png"));
+        final String imageUrl1 = response.getImages().get(1).getImageUrl();
+        assertThat(imageUrl1, is("http://localhost:14562/images/20150620120002-cam1.png"));
         assertThat(response.getImages().size(), is(2));
-        //TODO check follow image URLs
+
+        BufferedImage image0 = ImageIO.read(new URL(imageUrl0));
+        BufferedImage expectedImage0 = ImageIO.read(getClass().getResourceAsStream("/image1.png"));
+        assertTrue(imagesAreEqual(image0, expectedImage0));
+    }
+
+    private boolean imagesAreEqual(BufferedImage img1, BufferedImage img2) {
+        if (img1.getWidth() != img2.getWidth() || img1.getHeight() != img2.getHeight()) {
+            return false;
+        }
+        for (int y = 0; y < img1.getHeight(); ++y) {
+            for (int x = 0; x < img1.getWidth(); ++x) {
+                if (img1.getRGB(x, y) != img2.getRGB(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Test(expected = IOException.class)

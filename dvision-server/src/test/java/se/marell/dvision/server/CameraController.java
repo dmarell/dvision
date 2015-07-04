@@ -26,7 +26,7 @@ public class CameraController {
         return new ResponseEntity<>(IOUtils.toByteArray(in), HttpStatus.OK);
     }
 
-    public void setImageName(String imageName) {
+    public void setImageSource(String imageName) {
         this.imageName = imageName;
     }
 }
