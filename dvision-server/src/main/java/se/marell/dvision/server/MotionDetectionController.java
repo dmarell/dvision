@@ -110,6 +110,7 @@ public class MotionDetectionController {
         // Try reading camera, throwing IOException in case of failure
         try {
             ImageIO.read(request.getCamera().getUrl());
+            log.info("motiondetectionrequest, " + request.getCamera().getName());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -264,6 +265,7 @@ public class MotionDetectionController {
     public MotionDetectionResponse getMotionDetections(@PathVariable String cameraName, @RequestParam long since) {
         Slot slot = slots.get(cameraName);
         if (slot == null) {
+            log.error("getMotionDetections: Unknown camera " + cameraName);
             return null;
         }
         slot.lastRequestTimestamp = timeSource.currentTimeMillis();
@@ -278,6 +280,7 @@ public class MotionDetectionController {
             }
         }
         if (imageSize == null) {
+            log.debug("getMotionDetections: no motion, camera " + cameraName);
             return null;
         }
         return new MotionDetectionResponse(slot.lastRequestTimestamp / 1000, imageSize, allAreas, capturedImages);
