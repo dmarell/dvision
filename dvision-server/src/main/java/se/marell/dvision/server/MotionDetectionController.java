@@ -40,6 +40,7 @@ import java.util.concurrent.Future;
 public class MotionDetectionController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private static final int MAX_IDLE_TIME_MSEC = 10000;
+    private static final int MAX_HISTORY_TIME_MSEC = 10000;
 
     private class Slot {
         MotionDetectionRequest request;
@@ -119,14 +120,14 @@ public class MotionDetectionController {
 
     public void capture() {
         log.debug("capture, slots: " + slots.size());
-        removeUnusedCameraSlots();
+        removeOldSlotsAndResponses();
         for (Slot slot : slots.values()) {
             captureImage(slot);
         }
     }
 
     private void captureImage(Slot slot) {
-        log.info("captureImage: " + slot.request.getCamera().getName());
+        log.debug("captureImage: " + slot.request.getCamera().getName());
         if (slot.image == null) {
             if (slot.captureTimer.hasExpired()) {
                 slot.captureTimer.restart();
@@ -195,13 +196,22 @@ public class MotionDetectionController {
         g.dispose();
     }
 
-    private void removeUnusedCameraSlots() {
+    private void removeOldSlotsAndResponses() {
         Iterator<Slot> iter = slots.values().iterator();
         while (iter.hasNext()) {
             Slot slot = iter.next();
             if (timeSource.currentTimeMillis() - slot.lastRequestTimestamp > MAX_IDLE_TIME_MSEC) {
                 iter.remove();
                 log.info("Camera " + slot.request.getCamera().getName() + " removed, consumer timeout");
+            } else {
+                // Remove old responses
+                Iterator<MotionDetectionResponse> responsesIter = slot.responses.iterator();
+                while (responsesIter.hasNext()) {
+                    MotionDetectionResponse response = responsesIter.next();
+                    if (timeSource.currentTimeMillis() - response.getTimestamp() > MAX_HISTORY_TIME_MSEC) {
+                        iter.remove();
+                    }
+                }
             }
         }
     }
