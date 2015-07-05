@@ -262,11 +262,11 @@ public class MotionDetectionController {
      */
     @RequestMapping(value = "/motiondetectionresponse/{cameraName}", method = RequestMethod.GET)
     @ResponseBody
-    public MotionDetectionResponse getMotionDetections(@PathVariable String cameraName, @RequestParam long since) {
+    public ResponseEntity<MotionDetectionResponse> getMotionDetections(@PathVariable String cameraName, @RequestParam long since) {
         Slot slot = slots.get(cameraName);
         if (slot == null) {
             log.error("getMotionDetections: Unknown camera " + cameraName);
-            return null;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         slot.lastRequestTimestamp = timeSource.currentTimeMillis();
         ImageSize imageSize = null;
@@ -283,7 +283,7 @@ public class MotionDetectionController {
             log.debug("getMotionDetections: no motion, camera " + cameraName);
             return null;
         }
-        return new MotionDetectionResponse(slot.lastRequestTimestamp / 1000, imageSize, allAreas, capturedImages);
+        return new ResponseEntity<>(new MotionDetectionResponse(slot.lastRequestTimestamp / 1000, imageSize, allAreas, capturedImages), HttpStatus.OK);
     }
 
     @ResponseBody
