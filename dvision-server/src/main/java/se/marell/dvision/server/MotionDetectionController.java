@@ -210,7 +210,7 @@ public class MotionDetectionController {
                 while (responsesIter.hasNext()) {
                     MotionDetectionResponse response = responsesIter.next();
                     if (timeSource.currentTimeMillis() - response.getTimestamp() > MAX_HISTORY_TIME_MSEC) {
-                        iter.remove();
+                        responsesIter.remove();
                     }
                 }
             }
