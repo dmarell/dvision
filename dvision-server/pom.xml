@@ -11,22 +11,23 @@
 
     <artifactId>dvision-server</artifactId>
 
+    <properties>
+        <start-class>se.marell.dvision.server.Application</start-class>
+        <spring-boot-version>1.2.4.RELEASE</spring-boot-version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.2.4.RELEASE</version>
+                <version>${spring-boot-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <properties>
-        <start-class>se.marell.dvision.server.Application</start-class>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -152,6 +153,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-version}</version>
                 <executions>
                     <execution>
                         <goals>
