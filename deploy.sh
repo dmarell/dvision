@@ -6,11 +6,10 @@
 # $3=username on deployment host   vuser
 # $4=deployment directory          /usr/local/dvision-server
 
-ssh -l bv83 $2 "cd $4;mv -f dvision-server.jar dvision-server.jar.old"
+ssh -l $3 $2 "cd $4; [ ! -f dvision-server.jar ] || mv -f dvision-server.jar dvision-server.jar.old"
 scp dvision-server/target/dvision-server-$1.jar $3@$2:$4/dvision-server.jar
-ssh -l bv83 $2 "sudo service dvision-server restart"
+ssh -l $3 $2 "sudo service dvision-server restart"
 
-
-# Init på catalina7:
-#  sudo bash -c "cat /usr/local/jenkins/id_rsa-djenkins.pub >> /home/bv83/.ssh/authorized_keys"
-#  sudo adduser bv83 sudo
+# Initialization on deployment_host:
+#  sudo bash -c "cat id_rsa-jenkins.pub >> ~/<username_on_deployment_host>/.ssh/authorized_keys"
+#  sudo adduser <username_on_deployment_host> sudo
