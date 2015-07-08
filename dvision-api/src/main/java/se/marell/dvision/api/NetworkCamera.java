@@ -19,7 +19,7 @@ public class NetworkCamera {
     /**
      * @param name Camera name
      * @param url URL to camera image
-     * @param captureRate Capture rate in seconds
+     * @param captureRate Capture rate in milli seconds
      */
     public NetworkCamera(String name, String url, int captureRate) {
         this.name = name;
@@ -30,7 +30,7 @@ public class NetworkCamera {
     /**
      * @param name Camera name
      * @param url URL to camera image
-     * @param captureRate Capture rate in seconds
+     * @param captureRate Capture rate in milli seconds
      * @param username username or null if user/pass is not needed
      * @param password password or null if user/pass is not needed
      */

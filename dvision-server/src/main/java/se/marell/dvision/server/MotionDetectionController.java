@@ -55,7 +55,7 @@ public class MotionDetectionController {
         public Slot(MotionDetectionRequest request) {
             this.request = request;
             lastRequestTimestamp = timeSource.currentTimeMillis();
-            captureTimer = new PassiveTimer(request.getCamera().getCaptureRate() * 1000, timeSource);
+            captureTimer = new PassiveTimer(request.getCamera().getCaptureRate(), timeSource);
             detector = new MotionDetector(request.getAreaSizeThreshold(), request.getDetectionAreas());
         }
     }
@@ -257,12 +257,14 @@ public class MotionDetectionController {
      * Retrieve motion detections for camera since timestamp.
      *
      * @param cameraName A camera name
-     * @param since      Timestamp for earliest detection of interest. 0=returns all stored detections for this camera
+     * @param since      Timestamp in milliseconds for earliest detection of interest. 0=returns all stored
+     *                   detections for this camera
      * @return A response object or null if no such jobId is known
      */
     @RequestMapping(value = "/motiondetectionresponse/{cameraName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<MotionDetectionResponse> getMotionDetections(@PathVariable String cameraName, @RequestParam long since) {
+    public ResponseEntity<MotionDetectionResponse> getMotionDetections(@PathVariable String cameraName,
+                                                                       @RequestParam long since) {
         Slot slot = slots.get(cameraName);
         if (slot == null) {
             log.error("getMotionDetections: Unknown camera " + cameraName);
@@ -283,7 +285,8 @@ public class MotionDetectionController {
             log.debug("getMotionDetections: no motion, camera " + cameraName);
             return null;
         }
-        return new ResponseEntity<>(new MotionDetectionResponse(slot.lastRequestTimestamp / 1000, imageSize, allAreas, capturedImages), HttpStatus.OK);
+        return new ResponseEntity<>(new MotionDetectionResponse(slot.lastRequestTimestamp, imageSize, allAreas,
+                capturedImages), HttpStatus.OK);
     }
 
     @ResponseBody
