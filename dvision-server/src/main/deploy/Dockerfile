@@ -2,7 +2,7 @@ FROM java:8-jre
 MAINTAINER daniel@marell.se
 COPY dvision-server-${project.version}.jar /dvision-server.jar
 
-VOLUME ["/logs"]
+VOLUME ["/logs", "/cam-motion-grabber"]
 
 ENV DVISION_ENV prod
 EXPOSE 8080
