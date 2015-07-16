@@ -1,15 +1,15 @@
 #!/bin/sh
-#
-# Arguments                        Example
-# $1=version to deploy             124
-# $2=hostname where to deploy      vs1
-# $3=username on deployment host   vuser
-# $4=deployment directory          /usr/local/dvision-server
+version=$1
+targetHost=$2
+username=$3
+deployDir=$4
 
-ssh -l $3 $2 "cd $4; [ ! -f dvision-server.jar ] || mv -f dvision-server.jar dvision-server.jar.old"
-scp dvision-server/target/dvision-server-$1.jar $3@$2:$4/dvision-server.jar
-ssh -l $3 $2 "sudo service dvision-server restart"
+# copy files to target host
+scp dvision-server/target/dvision-server-${version}.jar ${username}@${targetHost}:${deployDir}/
+scp dvision-server/target/Dockerfile ${username}@${targetHost}:${deployDir}/
+scp dvision-server/target/docker-run.sh ${username}@${targetHost}:${deployDir}/
 
-# Initialization on deployment_host:
-#  sudo bash -c "cat id_rsa-jenkins.pub >> ~/<username_on_deployment_host>/.ssh/authorized_keys"
-#  sudo adduser <username_on_deployment_host> sudo
+ssh -l ${username} ${targetHost} "cd ${deployDir}; bash docker-run.sh"
+
+# Initialization on targetHost:
+# $ sudo cp dvision-server.conf /etc/init

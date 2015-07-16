@@ -14,6 +14,12 @@ public class MotionDetectionRequest {
     public MotionDetectionRequest() {
     }
 
+    /**
+     * @param camera Camera name
+     * @param minAreaSize Min sum of all areas in order to detect motion
+     * @param areaSizeThreshold Ignore areas smaller than this
+     * @param detectionAreas List of areas of interest
+     */
     public MotionDetectionRequest(NetworkCamera camera, int minAreaSize, int areaSizeThreshold,
                                   List<ImageRectangle> detectionAreas) {
         this.camera = camera;
