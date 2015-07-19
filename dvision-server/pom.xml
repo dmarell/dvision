@@ -44,7 +44,7 @@
         <dependency>
             <groupId>se.marell.dvesta</groupId>
             <artifactId>dvesta</artifactId>
-            <version>1.0.8</version>
+            <version>1.0.10</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>

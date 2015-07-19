@@ -3,6 +3,10 @@
 Spring Boot REST server implementing a motion detector for network cameras. Uses an image motion detection algorithm
 from JavaCV/OpenCV.
 
+### Release notes
+* Version 1.0.1 - 2015-07-19
+  * First release.
+
 ## API usage
 
 Call requestMotionDetection with information of camera URL, thresholds and areas of interest in the image.
@@ -10,11 +14,9 @@ The server starts polling the camera with the requested interval. Call requestMo
 in order to get information on in what areas(s) in the image motion was detected. As long as you continue call 
 requestMotionDetection the server will continue to capture and analyze images from this camera.
 
-When you stop calling requestMotionDetection the camera will be garbage collected in 10 seconds. If you call
-requestMotionDetection again after this the camera will be unknown and Bad request will be received. In order to 
-start capturing this camera again requestMotionDetection has to be called again. 
-
-Spring Boot Actuator endpoints (/health, /shutdown etc) are activated on port 14563.
+When you stop calling requestMotionDetection the camera will be garbage collected in 10 seconds. If
+requestMotionDetection is called again after this the camera will be unknown and Bad request will be received.
+Call requestMotionDetection in order to start capturing again.
 
 ## Build and run
 

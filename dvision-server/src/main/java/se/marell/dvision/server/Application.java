@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import se.marell.dvesta.system.BuildInfo;
-import se.marell.dvesta.system.LogbackLoggerInitializer;
 import se.marell.dvesta.system.RunEnvironment;
 import se.marell.dvesta.system.SystemSpringConfig;
 
@@ -29,7 +28,6 @@ public class Application {
         app.addListeners(new ApplicationListener<ApplicationEnvironmentPreparedEvent>() {
             @Override
             public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
-                LogbackLoggerInitializer.init(event.getEnvironment());
                 logger.info("AppVersion: " + BuildInfo.getAppVersion());
                 logger.info("RunEnvironment: " + RunEnvironment.getCurrentEnvironment(event.getEnvironment()));
             }
