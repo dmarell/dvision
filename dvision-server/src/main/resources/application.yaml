@@ -1,6 +1,10 @@
 server.port: 8080
+
+# Defaults, overriden by environment variables with the same names
 dvision.out-directory: cams/cam-motion-grabber
-motion-detection-service.baseurl: http://localhost:14562
+dvision.baseurl: http://localhost:14562
+dvision.apiuser: dvisionuser
+dvision.apipassword: dvisionpassword
 
 ---
 

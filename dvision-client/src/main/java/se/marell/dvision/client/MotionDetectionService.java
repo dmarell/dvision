@@ -4,11 +4,11 @@
 package se.marell.dvision.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import se.marell.dvision.api.MotionDetectionRequest;
 import se.marell.dvision.api.MotionDetectionResponse;
 
@@ -22,11 +22,18 @@ public class MotionDetectionService {
 
     private String serviceUrl;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private TestRestTemplate restTemplate;
 
     @PostConstruct
     public void init() {
-        serviceUrl = environment.getRequiredProperty("motion-detection-service.baseurl");
+        serviceUrl = environment.getRequiredProperty("dvision.baseurl");
+        String apiuser = environment.getProperty("dvision.apiuser");
+        String apipassword = environment.getProperty("dvision.apipassword");
+        if (apiuser != null && apipassword != null) {
+            restTemplate = new TestRestTemplate(apiuser, apipassword);
+        } else {
+            restTemplate = new TestRestTemplate();
+        }
     }
 
     public void requestMotionDetection(MotionDetectionRequest request) throws IOException {
