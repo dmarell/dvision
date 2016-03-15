@@ -71,7 +71,7 @@ public class MotionDetectionController {
     private Environment environment;
 
     private File outputDirectory;
-    private String baseUrl;
+    private String apiBaseUrl;
 
     @PostConstruct
     public void init() {
@@ -92,9 +92,9 @@ public class MotionDetectionController {
         String outputDirectoryString = environment.getRequiredProperty("dvision.out-directory");
         outputDirectory = new File(outputDirectoryString);
 
-        baseUrl = environment.getRequiredProperty("dvision.baseurl");
+        apiBaseUrl = environment.getRequiredProperty("dvision.apibaseurl");
 
-        log.info("out-directory: {}, baseurl: {}", outputDirectoryString, baseUrl);
+        log.info("out-directory: {}, apibaseurl: {}", outputDirectoryString, apiBaseUrl);
     }
 
     public void setCaptureInterval(String cameraName, long durationMsec) {
@@ -160,7 +160,7 @@ public class MotionDetectionController {
             final long millisNow = timeSource.currentTimeMillis();
             LocalDateTime localDateTimeNow = DateUtils.getLocalDateTime(millisNow);
             String imageFilename = getDateTimeString(localDateTimeNow) + "-" + slot.request.getCamera().getName() + ".png";
-            CapturedImage capturedImage = new CapturedImage(baseUrl + "/images/" + imageFilename, millisNow);
+            CapturedImage capturedImage = new CapturedImage(apiBaseUrl + "/images/" + imageFilename, millisNow);
             if (areaSize >= slot.request.getMinAreaSize()) {
                 log.info("Detected motion, cam: {}, size: {}", slot.request.getCamera().getName(), areaSize);
                 LocalDateTime dateTimePrevImage = DateUtils.getLocalDateTime(slot.previousCapturedImage.getTimestamp());
