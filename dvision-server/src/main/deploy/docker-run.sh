@@ -2,8 +2,8 @@
 apiuser=$1
 apipassword=$2
 apibaseurl=$3
-$mountdir=$4
-$outdir=$5
+mountdir=$4
+outdir=$5
 
 set -ex
 docker build -t dvision-server .
