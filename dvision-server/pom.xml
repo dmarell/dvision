@@ -13,7 +13,7 @@
 
     <properties>
         <start-class>se.marell.dvision.server.Application</start-class>
-        <spring-boot-version>1.2.4.RELEASE</spring-boot-version>
+        <spring-boot-version>1.3.2.RELEASE</spring-boot-version>
     </properties>
 
     <dependencyManagement>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>se.marell.dvesta</groupId>
             <artifactId>dvesta</artifactId>
-            <version>1.0.10</version>
+            <version>1.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>

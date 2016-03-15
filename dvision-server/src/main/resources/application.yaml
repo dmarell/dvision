@@ -12,18 +12,6 @@ spring.profiles: local
 
 ---
 
-spring.profiles: autosmall
-
----
-
-spring.profiles: autolarge
-
----
-
-spring.profiles: man
-
----
-
 spring.profiles: prod
 
 dvision.out-directory: /cam-motion-grabber

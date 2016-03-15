@@ -1,10 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 version=$1
 targetHost=$2
 username=$3
 deployDir=$4
 apiuser=$5
 apipassword=$6
+apibaseurl=$7
+mountdir=$8
+outdir=$9
 
 # copy files to target host
 scp dvision-server/target/dvision-server-${version}.jar ${username}@${targetHost}:${deployDir}/
