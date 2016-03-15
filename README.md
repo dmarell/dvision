@@ -4,7 +4,7 @@ Spring Boot REST server implementing a motion detector for network cameras. Uses
 from JavaCV/OpenCV.
 
 ### Release notes
-* Version 1.0.2 - 2016-03-16
+* Version 1.0.3 - 2016-03-16
    * Added basic authentication to server and client.
    * Added possibility to set parameters via environment variables: apiuser, apipassword apibaseurl outdirectory
    * Renamed config parameter prefix from motion-detection-service to dvision.

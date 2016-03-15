@@ -3,25 +3,24 @@
  */
 package se.marell.dvision.server;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 
 @Configuration
-@EnableWebMvcSecurity
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private Environment environment;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        String user = System.getenv("dvision.user");
-        if (user == null) {
-            user = "dvisionuser";
-        }
-        String password = System.getenv("dvision.password");
-        if (password == null) {
-            password = "dvisionpassword";
-        }
+        String user = environment.getRequiredProperty("dvision.apiuser");
+        String password = environment.getRequiredProperty("dvision.apipassword");
         auth.inMemoryAuthentication().withUser(user).password(password).roles("USER");
     }
 

@@ -89,16 +89,12 @@ public class MotionDetectionController {
             }
         });
 
-        String outputDirectoryString = System.getenv("dvision.out-directory");
-        if (outputDirectoryString == null) {
-            outputDirectoryString = environment.getRequiredProperty("dvision.out-directory");
-        }
+        String outputDirectoryString = environment.getRequiredProperty("dvision.out-directory");
         outputDirectory = new File(outputDirectoryString);
 
-        baseUrl = System.getenv("dvision.baseurl");
-        if (baseUrl == null) {
-            baseUrl = environment.getRequiredProperty("dvision.baseurl");
-        }
+        baseUrl = environment.getRequiredProperty("dvision.baseurl");
+
+        log.info("out-directory: {}, baseurl: {}", outputDirectoryString, baseUrl);
     }
 
     public void setCaptureInterval(String cameraName, long durationMsec) {
