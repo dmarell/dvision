@@ -4,6 +4,8 @@ Spring Boot REST server implementing a motion detector for network cameras. Uses
 from JavaCV/OpenCV.
 
 ### Release notes
+* Version 1.0.6 - 2016-03-21
+   * Uppdated dvesta in order to get log-level endpoints.
 * Version 1.0.5 - 2016-03-16
    * Added basic authentication to server and client.
    * Added possibility to set parameters via environment variables: apiuser, apipassword apibaseurl outdirectory
