@@ -1,17 +1,11 @@
 server.port: 8080
 
 # Defaults, overriden by environment variables with the same names
-dvision.out-directory: cams/cam-motion-grabber
-dvision.apibaseurl: http://localhost:14562
 dvision.apiuser: dvisionuser
 dvision.apipassword: dvisionpassword
 
 ---
-
 spring.profiles: local
 
 ---
-
 spring.profiles: prod
-
-dvision.out-directory: /cam-motion-grabber

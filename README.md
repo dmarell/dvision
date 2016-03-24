@@ -4,25 +4,22 @@ Spring Boot REST server implementing a motion detector for network cameras. Uses
 from JavaCV/OpenCV.
 
 ### Release notes
+* Version 2.0.0 - 2016-03-24
+   * Heavily simplified: Do not store images, do not access cameras - client uploads all images
 * Version 1.0.6 - 2016-03-21
-   * Uppdated dvesta in order to get log-level endpoints.
+   * Updated dvesta in order to get log-level endpoints
 * Version 1.0.5 - 2016-03-16
-   * Added basic authentication to server and client.
+   * Added basic authentication to server and client
    * Added possibility to set parameters via environment variables: apiuser, apipassword apibaseurl outdirectory
-   * Renamed config parameter prefix from motion-detection-service to dvision.
+   * Renamed config parameter prefix from motion-detection-service to dvision
 * Version 1.0.1 - 2015-07-19
-   * First release.
+   * First release
 
 ## API usage
 
-Call requestMotionDetection with information of camera URL, thresholds and areas of interest in the image.
-The server starts polling the camera with the requested interval. Call requestMotionDetection for example once a second
-in order to get information on in what areas(s) in the image motion was detected. As long as you continue call 
-requestMotionDetection the server will continue to capture and analyze images from this camera.
-
-When you stop calling requestMotionDetection the camera will be garbage collected in 10 seconds. If
-requestMotionDetection is called again after this the camera will be unknown and Bad request will be received.
-Call requestMotionDetection in order to start capturing again.
+Call requestMotionDetection with information of camera name, thresholds and areas of interest in the image, and the image.
+Next, call the same request again with another image. The response is motion between the two requests, or null if
+no motion was detected.
 
 ## Build and run
 
@@ -52,23 +49,14 @@ java -Dspring.profiles.active=prod -jar target/dvision-server-1-SNAPSHOT.jar
 
 Configuration for different profiles are in application.yaml.
 
-
-Captured images with detected motion are saved in directory "cams". Areas with motion are marked with green 
-rectangles.
-
 ## Example request/response
 
-HTTP POST http://localhost:14562/motiondetectionrequest
+HTTP POST http://localhost:14562/motion-detection-request
 
 Request body:
 ``` 
-{
-  "camera": {
-    "name": "cam1",
-    "url": "http://83.140.123.181/ImageHarvester/Images/556-slussen_panorama_1.jpg",
-    "username": "user1",
-    "password": "pass1"
-  },
+{ 
+  "name": "cam1",
   "minAreaSize": 100,
   "areaSizeThreshold": 10,
   "detectionAreas": [
@@ -78,11 +66,13 @@ Request body:
       "width": 1024,
       "height": 385
     }
-  ]
+  ],
+  "imageData": {
+    "mediaType": "image/jpeg",
+    "base64EncodedData": "..."
+  }
 }
 ``` 
-
-HTTP GET http://localhost:14562/motiondetectionresponse/cam1?since=0
 
 Response body:
 
@@ -107,7 +97,95 @@ Response body:
       "width": 3,
       "height": 9,
       "area": 27
+    },
+    {
+      "x": 107,
+      "y": 354,
+      "width": 10,
+      "height": 16,
+      "area": 160
+    },
+    {
+      "x": 136,
+      "y": 345,
+      "width": 13,
+      "height": 4,
+      "area": 52
+    },
+    {
+      "x": 120,
+      "y": 346,
+      "width": 14,
+      "height": 14,
+      "area": 196
+    },
+    {
+      "x": 990,
+      "y": 343,
+      "width": 6,
+      "height": 5,
+      "area": 30
+    },
+    {
+      "x": 147,
+      "y": 333,
+      "width": 4,
+      "height": 8,
+      "area": 32
+    },
+    {
+      "x": 168,
+      "y": 328,
+      "width": 13,
+      "height": 4,
+      "area": 52
+    },
+    {
+      "x": 154,
+      "y": 326,
+      "width": 10,
+      "height": 4,
+      "area": 40
+    },
+    {
+      "x": 148,
+      "y": 322,
+      "width": 5,
+      "height": 5,
+      "area": 25
+    },
+    {
+      "x": 164,
+      "y": 317,
+      "width": 6,
+      "height": 3,
+      "area": 18
+    },
+    {
+      "x": 175,
+      "y": 310,
+      "width": 6,
+      "height": 6,
+      "area": 36
+    },
+    {
+      "x": 374,
+      "y": 272,
+      "width": 11,
+      "height": 13,
+      "area": 143
+    },
+    {
+      "x": 318,
+      "y": 253,
+      "width": 8,
+      "height": 3,
+      "area": 24
     }
-  ]
+  ],
+  "imageData": {
+    "mediaType": "image/png",
+    "base64EncodedData": "..."
+  }
 }
 ``` 

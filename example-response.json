@@ -103,5 +103,9 @@
       "height": 3,
       "area": 24
     }
-  ]
+  ],
+  "imageData": {
+    "mediaType": "image/png",
+    "base64EncodedData": "..."
+  }
 }
