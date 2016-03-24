@@ -7,10 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import se.marell.dvision.api.ImageData;
 import se.marell.dvision.api.ImageRectangle;
 import se.marell.dvision.api.MotionDetectionRequest;
@@ -30,11 +29,10 @@ import static org.hamcrest.core.IsNull.nullValue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class, DVisionSpringConfig.class})
-@WebAppConfiguration
-@IntegrationTest
+@WebIntegrationTest({"server.port=0"})
 public class MotionDetectionControllerIT {
     @Autowired
-    AutowireCapableBeanFactory beanFactory;
+    private AutowireCapableBeanFactory beanFactory;
 
     @Test
     public void shouldDetectMotion() throws Exception {
