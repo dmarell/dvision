@@ -17,5 +17,4 @@ public class MotionDetectionRequest {
     private int minAreaSize;
     private int areaSizeThreshold;
     private List<ImageRectangle> detectionAreas;
-    private ImageData image;
 }

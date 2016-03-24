@@ -6,21 +6,20 @@ package se.marell.dvision.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import se.marell.dcommons.time.TimeSource;
 import se.marell.dvision.api.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class MotionDetectionController {
@@ -29,18 +28,38 @@ public class MotionDetectionController {
     @Autowired
     private TimeSource timeSource;
 
-    @RequestMapping(value = "/motion-detection-request", method = RequestMethod.POST)
-    public ResponseEntity<MotionDetectionResponse> getMotionDetectionRequest(
-            @RequestBody MotionDetectionRequest request) throws IOException {
+    @RequestMapping(value = "/motion-detection-request/{cameraName}", method = RequestMethod.POST)
+    public ResponseEntity<MotionDetectionResponse> postMotionDetectionRequest(
+            @PathVariable String cameraName,
+            @RequestParam(name = "minAreaSize", defaultValue= "1000") int minAreaSize,
+            @RequestParam(name = "areaSizeThreshold", defaultValue= "100") int areaSizeThreshold,
+//            @RequestParam List<ImageRectangle> detectionAreas,
+            @RequestParam MultipartFile file) throws IOException {
+        MotionDetectionRequest request = new MotionDetectionRequest(cameraName, minAreaSize, areaSizeThreshold, new ArrayList<>()/*detectionAreas*/);
         Slot slot = slots.get(request.getCameraName());
+        ImageData image = new ImageData("png", Base64.getEncoder().encodeToString(file.getBytes()));
         if (slot == null) {
-            slots.put(request.getCameraName(), new Slot(request));
+            slots.put(request.getCameraName(), new Slot(request, image));
             return null;
         }
 
         // Search for motion between image in slot and image in request
-        MotionDetectionResponse response = analyzeImage(slot, ImageData.createBufferedImage(request.getImage()));
+        MotionDetectionResponse response = analyzeImage(slot, ImageData.createBufferedImage(image));
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/camera-image/{cameraName}", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getCameraImage(
+            @PathVariable String cameraName) {
+        Slot slot = slots.get(cameraName);
+        if (slot == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setContentType(MediaType.parseMediaType(slot.image.getMediaType()));
+        return new ResponseEntity<>(
+                Base64.getDecoder().decode(slot.image.getBase64EncodedData()),
+                responseHeaders, HttpStatus.OK);
     }
 
     private MotionDetectionResponse analyzeImage(Slot slot, BufferedImage image) {
@@ -96,11 +115,13 @@ public class MotionDetectionController {
 
     private class Slot {
         MotionDetectionRequest request;
+        ImageData image;
         MotionDetector detector;
 
-        public Slot(MotionDetectionRequest request) {
+        public Slot(MotionDetectionRequest request, ImageData image) {
             this.request = request;
             detector = new MotionDetector(request.getAreaSizeThreshold(), request.getDetectionAreas());
+            this.image = image;
         }
     }
 }

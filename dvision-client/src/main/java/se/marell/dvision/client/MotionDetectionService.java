@@ -6,12 +6,15 @@ package se.marell.dvision.client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.core.env.Environment;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import se.marell.dvision.api.MotionDetectionRequest;
 import se.marell.dvision.api.MotionDetectionResponse;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 
 @Service
 public class MotionDetectionService {
@@ -35,13 +38,33 @@ public class MotionDetectionService {
     }
 
     /**
-     * Retrieve motion detections for camera.
+     * Retrieve motion detections between images.
      *
-     * @param request Motion detection request
+     * @param request   Motion detection request
+     * @param mediaType Content type (png, jpeg, ...)
+     * @param imageData Image data
      * @return A response object or null
      */
-    public ResponseEntity<MotionDetectionResponse> motionDetectionRequest(MotionDetectionRequest request) {
-        return restTemplate.postForEntity(serviceUrl + "/motion-detection-request",
-                request, MotionDetectionResponse.class);
+    public ResponseEntity<MotionDetectionResponse> motionDetectionRequest(MotionDetectionRequest request,
+                                                                          String mediaType, byte[] imageData) {
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("file", imageData);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(parts, headers);
+        return restTemplate.exchange(
+                serviceUrl +
+                        "/motion-detection-request/{cameraName}?" +
+                        "minAreaSize={minAreaSize}&" +
+                        "areaSizeThreshold={areaSizeThreshold}",
+                HttpMethod.POST, entity,
+                MotionDetectionResponse.class,
+                request.getCameraName(),
+                request.getMinAreaSize(),
+                request.getAreaSizeThreshold());
+
+        //TODO
+        //"detectionAreas={detectionAreas}",
+        //request.getDetectionAreas());
     }
 }
