@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import se.marell.dvision.api.ImageData;
 import se.marell.dvision.api.ImageRectangle;
@@ -29,7 +30,8 @@ import static org.hamcrest.core.IsNull.nullValue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class, DVisionSpringConfig.class})
-@WebIntegrationTest({"server.port=0"})
+@WebIntegrationTest({"server.port=23465"})
+@TestPropertySource(properties="dvision.baseurl=http://localhost:23465")
 public class MotionDetectionControllerIT {
     @Autowired
     private AutowireCapableBeanFactory beanFactory;

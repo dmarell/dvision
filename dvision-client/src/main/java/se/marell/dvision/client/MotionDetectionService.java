@@ -18,10 +18,13 @@ public class MotionDetectionService {
     @Autowired
     private Environment environment;
 
+    private String serviceUrl;
+
     private TestRestTemplate restTemplate;
 
     @PostConstruct
     public void init() {
+        serviceUrl = environment.getRequiredProperty("dvision.baseurl");
         String apiuser = environment.getProperty("dvision.apiuser");
         String apipassword = environment.getProperty("dvision.apipassword");
         if (apiuser != null && apipassword != null) {
@@ -38,7 +41,7 @@ public class MotionDetectionService {
      * @return A response object or null
      */
     public ResponseEntity<MotionDetectionResponse> motionDetectionRequest(MotionDetectionRequest request) {
-        return restTemplate.postForEntity("http://localhost:8080/motion-detection-request",
+        return restTemplate.postForEntity(serviceUrl + "/motion-detection-request",
                 request, MotionDetectionResponse.class);
     }
 }
