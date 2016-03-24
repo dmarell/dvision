@@ -2,8 +2,6 @@
 apiuser=$1
 apipassword=$2
 apibaseurl=$3
-mountdir=$4
-outdir=$5
 
 set -ex
 docker build -t dvision-server .
@@ -13,7 +11,5 @@ docker run -d --name dvision-server \
     -e DVISION_APIUSER=$apiuser \
     -e DVISION_APIPASSWORD=$apipassword \
     -e DVISION_APIBASEURL=$apibaseurl \
-    -e DVISION_OUT_DIRECTORY=$outdir \
-    -p 14562:8080 \
-    -v $mountdir:$outdir \
+    -p 10111:8080 \
     dvision-server
