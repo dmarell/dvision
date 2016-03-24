@@ -1,21 +1,15 @@
 #!/bin/bash
-version=$1
-targetHost=$2
-username=$3
-deployDir=$4
-apiuser=$5
-apipassword=$6
-apibaseurl=$7
-mountdir=$8
-outdir=$9
+apiuser=$1
+apipassword=$2
+apibaseurl=$3
 
-# copy files to target host
-scp dvision-server/target/dvision-server-${version}.jar ${username}@${targetHost}:${deployDir}/
-scp dvision-server/target/Dockerfile ${username}@${targetHost}:${deployDir}/
-scp dvision-server/target/docker-run.sh ${username}@${targetHost}:${deployDir}/
-
-ssh -l ${username} ${targetHost} "cd ${deployDir}; \
-    bash docker-run.sh $apiuser $apipassword $apibaseurl $mountdir $outdir"
-
-# Initialization on targetHost:
-# $ sudo cp dvision-server.conf /etc/init
+set -ex
+docker build -t dvision-server dvision-server/target
+docker stop dvision-server 2> /dev/null || true
+docker rm -f dvision-server || true
+docker run -d --name dvision-server \
+    -e DVISION_APIUSER=$apiuser \
+    -e DVISION_APIPASSWORD=$apipassword \
+    -e DVISION_APIBASEURL=$apibaseurl \
+    -p 10111:8080 \
+    dvision-server
