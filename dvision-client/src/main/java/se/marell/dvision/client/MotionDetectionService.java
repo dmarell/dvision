@@ -68,8 +68,5 @@ public class MotionDetectionService {
                 request.getCameraName(),
                 request.getMinAreaSize(),
                 request.getAreaSizeThreshold());
-        //TODO
-        //"detectionAreas={detectionAreas}",
-        //request.getDetectionAreas());
     }
 }

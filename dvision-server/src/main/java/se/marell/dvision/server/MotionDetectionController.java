@@ -31,9 +31,8 @@ public class MotionDetectionController {
     @RequestMapping(value = "/motion-detection-request/{cameraName}", method = RequestMethod.POST)
     public ResponseEntity<MotionDetectionResponse> postMotionDetectionRequest(
             @PathVariable String cameraName,
-            @RequestParam(name = "minAreaSize", defaultValue= "1000") int minAreaSize,
-            @RequestParam(name = "areaSizeThreshold", defaultValue= "100") int areaSizeThreshold,
-//            @RequestParam List<ImageRectangle> detectionAreas,
+            @RequestParam(name = "minAreaSize", defaultValue = "1000") int minAreaSize,
+            @RequestParam(name = "areaSizeThreshold", defaultValue = "100") int areaSizeThreshold,
             @RequestParam MultipartFile file) throws IOException {
         MotionDetectionRequest request = new MotionDetectionRequest(cameraName, minAreaSize, areaSizeThreshold, new ArrayList<>()/*detectionAreas*/);
         Slot slot = slots.get(request.getCameraName());
