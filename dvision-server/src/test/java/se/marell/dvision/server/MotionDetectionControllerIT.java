@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import se.marell.dvision.api.ImageRectangle;
@@ -41,40 +42,43 @@ public class MotionDetectionControllerIT {
         byte[] image2Bytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/image2.png"));
 
         {
-            MotionDetectionResponse r = service.motionDetectionRequest(
+            ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
                     new MotionDetectionRequest(
                             "cam1",
                             1000,
                             100,
                             Arrays.asList(new ImageRectangle(0, 0, 640, 480))),
                     "image/png",
-                    image1Bytes).getBody();
-            assertThat(r, nullValue());
+                    image1Bytes);
+            assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
+            assertThat(r.getBody(), nullValue());
         }
         {
-            MotionDetectionResponse r = service.motionDetectionRequest(
+            ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
                     new MotionDetectionRequest(
                             "cam1",
                             1000,
                             100,
                             Arrays.asList(new ImageRectangle(0, 0, 640, 480))),
                     "image/png",
-                    image1Bytes).getBody();
-            assertThat(r, nullValue());
+                    image1Bytes);
+            assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
+            assertThat(r.getBody(), nullValue());
         }
         {
-            MotionDetectionResponse r = service.motionDetectionRequest(
+            ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
                     new MotionDetectionRequest(
                             "cam1",
                             1000,
                             100,
                             Arrays.asList(new ImageRectangle(0, 0, 640, 480))),
                     "image/png",
-                    image2Bytes).getBody();
-            assertThat(r.getAreas().size(), greaterThan(0));
-            assertThat(r.getImageSize().getWidth(), is(640));
-            assertThat(r.getImageSize().getHeight(), is(480));
-            assertThat(r.getImage(), notNullValue());
+                    image2Bytes);
+            assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
+            assertThat(r.getBody().getAreas().size(), greaterThan(0));
+            assertThat(r.getBody().getImageSize().getWidth(), is(640));
+            assertThat(r.getBody().getImageSize().getHeight(), is(480));
+            assertThat(r.getBody().getImage(), notNullValue());
         }
     }
 }

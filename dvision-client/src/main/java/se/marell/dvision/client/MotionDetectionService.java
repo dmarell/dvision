@@ -6,6 +6,7 @@ package se.marell.dvision.client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -48,7 +49,12 @@ public class MotionDetectionService {
     public ResponseEntity<MotionDetectionResponse> motionDetectionRequest(MotionDetectionRequest request,
                                                                           String mediaType, byte[] imageData) {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.add("file", imageData);
+        parts.add("file", new ByteArrayResource(imageData) {
+            @Override
+            public String getFilename() {
+                return "image.png";
+            }
+        });
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(parts, headers);
@@ -62,7 +68,6 @@ public class MotionDetectionService {
                 request.getCameraName(),
                 request.getMinAreaSize(),
                 request.getAreaSizeThreshold());
-
         //TODO
         //"detectionAreas={detectionAreas}",
         //request.getDetectionAreas());
