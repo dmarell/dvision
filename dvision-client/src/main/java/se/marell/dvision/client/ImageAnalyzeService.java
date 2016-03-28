@@ -12,9 +12,12 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import se.marell.dvision.api.DvisionImageUtil;
 import se.marell.dvision.api.ImageAnalyzeResponse;
 
 import javax.annotation.PostConstruct;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Arrays;
 
 @Service
@@ -42,21 +45,26 @@ public class ImageAnalyzeService {
      * Analyze uploaded images.
      *
      * @param cameraName Camera name
-     * @param mediaType  Content type (image/png, image/jpeg, ...)
-     * @param imageData  Image data
+     * @param image      Image data
      * @return Response object
      */
-    public ResponseEntity<ImageAnalyzeResponse> analyzeImage(String cameraName, String mediaType, byte[] imageData) {
-        HttpHeaders partHeaders = new HttpHeaders();
-        partHeaders.setContentType(MediaType.parseMediaType(mediaType));
-       MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        HttpEntity<Resource> partEntity = new HttpEntity<>(new ByteArrayResource(imageData) {
-            @Override
-            public String getFilename() {
-                return "image";
-            }
-        }, partHeaders);
-        parts.add("file", partEntity);
+    public ResponseEntity<ImageAnalyzeResponse> analyzeImage(String cameraName, BufferedImage image) {
+        MultiValueMap<String, Object> parts;
+        try {
+            HttpHeaders partHeaders = new HttpHeaders();
+            byte[] imageData = DvisionImageUtil.create(image, "png");
+            partHeaders.setContentType(MediaType.IMAGE_PNG);
+            parts = new LinkedMultiValueMap<>();
+            HttpEntity<Resource> partEntity = new HttpEntity<>(new ByteArrayResource(imageData) {
+                @Override
+                public String getFilename() {
+                    return "image";
+                }
+            }, partHeaders);
+            parts.add("file", partEntity);
+        } catch (IOException e) {
+            throw new RuntimeException("Unexpected IOException converting BufferedImage", e);
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

@@ -3,7 +3,6 @@
  */
 package se.marell.dvision.server;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +12,16 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import se.marell.dvision.api.ImageAnalyzeRequest;
 import se.marell.dvision.api.ImageAnalyzeResponse;
 import se.marell.dvision.client.DVisionSpringConfig;
 import se.marell.dvision.client.ImageAnalyzeService;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class, DVisionSpringConfig.class})
@@ -34,14 +34,11 @@ public class ImageAnalyzeControllerIT {
     @Test
     public void shouldDetectMotion() throws Exception {
         ImageAnalyzeService service = beanFactory.createBean(ImageAnalyzeService.class);
-        byte[] image1Bytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/image1.png"));
-        byte[] image2Bytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/image2.png"));
+        BufferedImage image1 = ImageIO.read(this.getClass().getResourceAsStream("/image1.png"));
+        BufferedImage image2 = ImageIO.read(this.getClass().getResourceAsStream("/image2.png"));
 
         {
-            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage(
-                    "cam1",
-                    "image/png",
-                    image1Bytes);
+            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage("cam1", image1);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
             assertThat(r.getBody().getMotionAreas().size(), is(0));
             assertThat(r.getBody().getFaceAreas().size(), is(0));
@@ -49,10 +46,7 @@ public class ImageAnalyzeControllerIT {
             assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }
         {
-            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage(
-                    "cam1",
-                    "image/png",
-                    image1Bytes);
+            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage("cam1", image1);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
             assertThat(r.getBody().getMotionAreas().size(), is(0));
             assertThat(r.getBody().getFaceAreas().size(), is(0));
@@ -60,10 +54,7 @@ public class ImageAnalyzeControllerIT {
             assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }
         {
-            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage(
-                    "cam1",
-                    "image/png",
-                    image2Bytes);
+            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage("cam1", image2);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
             assertThat(r.getBody().getMotionAreas().size(), greaterThan(0));
             assertThat(r.getBody().getFaceAreas().size(), is(1));

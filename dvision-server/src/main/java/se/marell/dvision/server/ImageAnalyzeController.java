@@ -15,7 +15,10 @@ import se.marell.dvision.api.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ImageAnalyzeController {
@@ -31,18 +34,17 @@ public class ImageAnalyzeController {
             @RequestParam MultipartFile file) throws IOException {
         ImageAnalyzeRequest request = new ImageAnalyzeRequest(cameraName);
         Slot slot = slots.get(request.getCameraName());
-        ImageData image = new ImageData("image/png", Base64.getEncoder().encodeToString(file.getBytes()));
-        BufferedImage bImage = ImageData.createBufferedImage(image);
+        BufferedImage bImage = DvisionImageUtil.createBufferedImage(file.getBytes());
         ImageAnalyzeResponse emptyResponse = new ImageAnalyzeResponse(System.currentTimeMillis(),
                 new ImageSize(bImage.getWidth(), bImage.getHeight()), new ArrayList<>(), new ArrayList<>());
         if (slot == null) {
-            slots.put(request.getCameraName(), new Slot(request, image));
+            slots.put(request.getCameraName(), new Slot(request, bImage));
             return new ResponseEntity<>(emptyResponse, HttpStatus.OK);
         }
 
         // Search for motion between image in slot and image in request
-        ImageAnalyzeResponse response = analyzeImage(slot, bImage, ImageData.createBufferedImage(slot.image));
-        slot.image = image;
+        ImageAnalyzeResponse response = analyzeImage(slot, bImage, slot.image);
+        slot.image = bImage;
         if (response.getMotionAreas().isEmpty()) {
             return new ResponseEntity<>(emptyResponse, HttpStatus.OK);
         }
@@ -54,11 +56,7 @@ public class ImageAnalyzeController {
         List<ImageRectangle> motionAreas = slot.motionDetector.getMotionAreas(image1, image2);
         List<ImageRectangle> faceAreas = slot.faceDetector.getFaceAreas(image1);
         ImageAnalyzeResponse response;
-        try {
-            slot.markedImage = ImageData.create(image1);
-        } catch (IOException e) {
-            log.warn("Failed to unpack marked image", e);
-        }
+        slot.markedImage = image1;
         response = new ImageAnalyzeResponse(
                 timeSource.currentTimeMillis(),
                 new ImageSize(image1.getWidth(), image1.getHeight()),
@@ -69,12 +67,12 @@ public class ImageAnalyzeController {
 
     private static class Slot {
         ImageAnalyzeRequest request;
-        ImageData image;
+        BufferedImage image;
         MotionDetector motionDetector;
         FaceDetector faceDetector;
-        ImageData markedImage;
+        BufferedImage markedImage;
 
-        public Slot(ImageAnalyzeRequest request, ImageData image) {
+        public Slot(ImageAnalyzeRequest request, BufferedImage image) {
             this.request = request;
             motionDetector = new MotionDetector();
             faceDetector = new FaceDetector();
