@@ -31,19 +31,20 @@ public class MotionDetectionController {
     @RequestMapping(value = "/motion-detection-request/{cameraName}", method = RequestMethod.POST)
     public ResponseEntity<MotionDetectionResponse> postMotionDetectionRequest(
             @PathVariable String cameraName,
-            @RequestParam(name = "minAreaSize", defaultValue = "1000") int minAreaSize,
-            @RequestParam(name = "areaSizeThreshold", defaultValue = "100") int areaSizeThreshold,
             @RequestParam MultipartFile file) throws IOException {
-        MotionDetectionRequest request = new MotionDetectionRequest(cameraName, minAreaSize, areaSizeThreshold, new ArrayList<>()/*detectionAreas*/);
+        MotionDetectionRequest request = new MotionDetectionRequest(cameraName);
         Slot slot = slots.get(request.getCameraName());
-        ImageData image = new ImageData("png", Base64.getEncoder().encodeToString(file.getBytes()));
+        ImageData image = new ImageData("image/png", Base64.getEncoder().encodeToString(file.getBytes()));
         if (slot == null) {
             slots.put(request.getCameraName(), new Slot(request, image));
             return null;
         }
 
         // Search for motion between image in slot and image in request
-        MotionDetectionResponse response = analyzeImage(slot, ImageData.createBufferedImage(image));
+        MotionDetectionResponse response = analyzeImage(slot, ImageData.createBufferedImage(image), ImageData.createBufferedImage(slot.image));
+        if (response.getAreas().isEmpty()) {
+            return null;
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -57,30 +58,24 @@ public class MotionDetectionController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.parseMediaType(slot.image.getMediaType()));
         return new ResponseEntity<>(
-                Base64.getDecoder().decode(slot.image.getBase64EncodedData()),
+                Base64.getDecoder().decode(slot.markedImage.getBase64EncodedData()),
                 responseHeaders, HttpStatus.OK);
     }
 
-    private MotionDetectionResponse analyzeImage(Slot slot, BufferedImage image) {
+    private MotionDetectionResponse analyzeImage(Slot slot, BufferedImage image1, BufferedImage image2) {
         log.debug("Camera {}, analyzing image", slot.request.getCameraName());
-        List<ImageRectangle> areas = slot.detector.getMotionAreas(image);
-        int areaSize = calcArea(areas);
-        MotionDetectionResponse response = null;
-        if (areaSize >= slot.request.getMinAreaSize()) {
-            log.info("Detected motion, cam: {}, size: {}", slot.request.getCameraName(), areaSize);
-            drawMotionRectangles(image, Color.green, areas);
-            try {
-                response = new MotionDetectionResponse(
-                        timeSource.currentTimeMillis(),
-                        new ImageSize(image.getWidth(), image.getHeight()),
-                        areas,
-                        ImageData.create(image));
-            } catch (IOException e) {
-                log.debug("Failed to convert image: {}", e.getMessage());
-            }
-        } else {
-            log.debug("Camera {}, no change in image", slot.request.getCameraName());
+        List<ImageRectangle> areas = slot.detector.getMotionAreas(image1, image2);
+        MotionDetectionResponse response;
+        drawMotionRectangles(image1, Color.green, areas);
+        try {
+            slot.markedImage = ImageData.create(image1);
+        } catch (IOException e) {
+            log.warn("Failed to unpack marked image", e);
         }
+        response = new MotionDetectionResponse(
+                timeSource.currentTimeMillis(),
+                new ImageSize(image1.getWidth(), image1.getHeight()),
+                areas);
         return response;
     }
 
@@ -104,22 +99,15 @@ public class MotionDetectionController {
         g.dispose();
     }
 
-    private int calcArea(List<ImageRectangle> rectangles) {
-        int area = 0;
-        for (ImageRectangle b : rectangles) {
-            area += b.getArea();
-        }
-        return area;
-    }
-
     private class Slot {
         MotionDetectionRequest request;
         ImageData image;
         MotionDetector detector;
+        ImageData markedImage;
 
         public Slot(MotionDetectionRequest request, ImageData image) {
             this.request = request;
-            detector = new MotionDetector(request.getAreaSizeThreshold(), request.getDetectionAreas());
+            detector = new MotionDetector();
             this.image = image;
         }
     }

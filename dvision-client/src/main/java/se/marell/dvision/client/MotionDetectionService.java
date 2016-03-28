@@ -59,14 +59,9 @@ public class MotionDetectionService {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(parts, headers);
         return restTemplate.exchange(
-                serviceUrl +
-                        "/motion-detection-request/{cameraName}?" +
-                        "minAreaSize={minAreaSize}&" +
-                        "areaSizeThreshold={areaSizeThreshold}",
+                serviceUrl + "/motion-detection-request/{cameraName}",
                 HttpMethod.POST, entity,
                 MotionDetectionResponse.class,
-                request.getCameraName(),
-                request.getMinAreaSize(),
-                request.getAreaSizeThreshold());
+                request.getCameraName());
     }
 }

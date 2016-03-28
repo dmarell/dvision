@@ -23,7 +23,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam1Event1() throws Exception {
-        MotionDetector m = new MotionDetector(100, Arrays.asList(new ImageRectangle(0, 0, 640, 480)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, m, "testdata/motiondetector/cam1/event1",
                 Arrays.asList(
                         "cam1-00070.png: n",
@@ -62,7 +62,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam1Event2() throws Exception {
-        MotionDetector m = new MotionDetector(100, Arrays.asList(new ImageRectangle(0, 0, 640, 480)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, m, "testdata/motiondetector/cam1/event2",
                 Arrays.asList(
                         "cam1-00148.png: n",
@@ -93,7 +93,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam2Event1() throws Exception {
-        MotionDetector m = new MotionDetector(100, Arrays.asList(new ImageRectangle(0, 0, 640, 480)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, m, "testdata/motiondetector/cam2/event1",
                 Arrays.asList(
                         "cam2-00001.png: n",
@@ -131,7 +131,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam2Event2() throws Exception {
-        MotionDetector m = new MotionDetector(100, Arrays.asList(new ImageRectangle(0, 0, 640, 480)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, m, "testdata/motiondetector/cam2/event2",
                 Arrays.asList(
                         "cam2-00140.png: n",
@@ -170,7 +170,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam3Event1() throws Exception {
-        MotionDetector m = new MotionDetector(50, Arrays.asList(new ImageRectangle(0, 240, 300, 240)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, m, "testdata/motiondetector/cam3/event1",
                 Arrays.asList(
                         "cam3-00090.png: n",
@@ -195,7 +195,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam3Event2() throws Exception {
-        MotionDetector m = new MotionDetector(50, Arrays.asList(new ImageRectangle(0, 240, 300, 240)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, m, "testdata/motiondetector/cam3/event2",
                 Arrays.asList(
                         "cam3-00106.png: n",
@@ -228,7 +228,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam3Event3() throws Exception {
-        MotionDetector m = new MotionDetector(50, Arrays.asList(new ImageRectangle(0, 240, 300, 240)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, m, "testdata/motiondetector/cam3/event3",
                 Arrays.asList(
                         "cam3-00130.png: n",
@@ -293,7 +293,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam11Event1() throws Exception {
-        MotionDetector m = new MotionDetector(50, Arrays.asList(new ImageRectangle(0, 0, 704, 480)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, m, "testdata/motiondetector/cam11/event1",
                 Arrays.asList(
                         "cam11-00080.png: n",
@@ -322,7 +322,7 @@ public class MotionDetectorTest {
     @Ignore // TODO restore when opencv is working
     @Test
     public void testCam11Event2() throws Exception {
-        MotionDetector m = new MotionDetector(50, Arrays.asList(new ImageRectangle(0, 0, 704, 480)));
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, m, "testdata/motiondetector/cam11/event2",
                 Arrays.asList(
                         "cam11-00134.png: n",
@@ -392,11 +392,15 @@ public class MotionDetectorTest {
         File[] files = dir.listFiles();
         if (files != null) {
             Arrays.sort(files);
+            BufferedImage prevImage = null;
             for (File file : files) {
                 if (file.getName().endsWith(".png")) {
                     BufferedImage image = ImageIO.read(file);
-                    List<ImageRectangle> rectangles = m.getMotionAreas(image);
-                    result.add(new ImageResult(file.getName(), rectangles));
+                    if (prevImage != null) {
+                        List<ImageRectangle> rectangles = m.getMotionAreas(image, prevImage);
+                        result.add(new ImageResult(file.getName(), rectangles));
+                        prevImage = image;
+                    }
                 }
             }
         }

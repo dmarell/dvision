@@ -7,14 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MotionDetectionRequest {
     private String cameraName;
-    private int minAreaSize;
-    private int areaSizeThreshold;
-    private List<ImageRectangle> detectionAreas;
 }

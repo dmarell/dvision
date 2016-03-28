@@ -2,6 +2,6 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-    <logger name="se.marell.dvision" level="info"/>
+    <logger name="se.marell.dvision" level="trace"/>
     <logger name="org.springframework" level="info"/>
 </configuration>

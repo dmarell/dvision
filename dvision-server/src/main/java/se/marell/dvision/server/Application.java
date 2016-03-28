@@ -30,7 +30,6 @@ public class Application {
             public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
                 logger.info("AppVersion: " + BuildInfo.getAppVersion());
                 logger.info("RunEnvironment: " + RunEnvironment.getCurrentEnvironment(event.getEnvironment()));
-                logger.debug("dvision.apibaseurl: {}", event.getEnvironment().getProperty("dvision.apibaseurl"));
             }
         });
         app.run(args);

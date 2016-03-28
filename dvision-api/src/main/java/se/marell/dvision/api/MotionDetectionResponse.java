@@ -16,6 +16,5 @@ public class MotionDetectionResponse {
     private long timestamp;
     private ImageSize imageSize;
     private List<ImageRectangle> areas;
-    private ImageData image;
 }
 

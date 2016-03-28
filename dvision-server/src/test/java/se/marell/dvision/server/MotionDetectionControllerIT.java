@@ -13,17 +13,13 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import se.marell.dvision.api.ImageRectangle;
 import se.marell.dvision.api.MotionDetectionRequest;
 import se.marell.dvision.api.MotionDetectionResponse;
 import se.marell.dvision.client.DVisionSpringConfig;
 import se.marell.dvision.client.MotionDetectionService;
 
-import java.util.Arrays;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 
@@ -43,11 +39,7 @@ public class MotionDetectionControllerIT {
 
         {
             ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
-                    new MotionDetectionRequest(
-                            "cam1",
-                            1000,
-                            100,
-                            Arrays.asList(new ImageRectangle(0, 0, 640, 480))),
+                    new MotionDetectionRequest("cam1"),
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
@@ -55,11 +47,7 @@ public class MotionDetectionControllerIT {
         }
         {
             ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
-                    new MotionDetectionRequest(
-                            "cam1",
-                            1000,
-                            100,
-                            Arrays.asList(new ImageRectangle(0, 0, 640, 480))),
+                    new MotionDetectionRequest("cam1"),
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
@@ -67,18 +55,13 @@ public class MotionDetectionControllerIT {
         }
         {
             ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
-                    new MotionDetectionRequest(
-                            "cam1",
-                            1000,
-                            100,
-                            Arrays.asList(new ImageRectangle(0, 0, 640, 480))),
+                    new MotionDetectionRequest("cam1"),
                     "image/png",
                     image2Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
             assertThat(r.getBody().getAreas().size(), greaterThan(0));
             assertThat(r.getBody().getImageSize().getWidth(), is(640));
             assertThat(r.getBody().getImageSize().getHeight(), is(480));
-            assertThat(r.getBody().getImage(), notNullValue());
         }
     }
 }
