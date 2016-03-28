@@ -38,8 +38,8 @@ public class ImageAnalyzeControllerIT {
         byte[] image2Bytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/image2.png"));
 
         {
-            ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
-                    new ImageAnalyzeRequest("cam1"),
+            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage(
+                    "cam1",
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
@@ -49,8 +49,8 @@ public class ImageAnalyzeControllerIT {
             assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }
         {
-            ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
-                    new ImageAnalyzeRequest("cam1"),
+            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage(
+                    "cam1",
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
@@ -60,8 +60,8 @@ public class ImageAnalyzeControllerIT {
             assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }
         {
-            ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
-                    new ImageAnalyzeRequest("cam1"),
+            ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage(
+                    "cam1",
                     "image/png",
                     image2Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));

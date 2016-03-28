@@ -4,6 +4,8 @@ Spring Boot REST server implementing a motion detector for network cameras. Uses
 from JavaCV/OpenCV.
 
 ### Release notes
+* Version 2.1.0 - 2016-03-28
+   * Simplified client API
 * Version 2.0.0 - 2016-03-28
    * Heavily simplified: Do not store images, do not access cameras - client uploads all images. Motion detection result
     is filtred by client (areaSizeThreshold, minAreaSize, detectionAreas). Added face detection.

@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import se.marell.dvision.api.ImageAnalyzeRequest;
 import se.marell.dvision.api.ImageAnalyzeResponse;
 
 import javax.annotation.PostConstruct;
@@ -39,22 +39,25 @@ public class ImageAnalyzeService {
     }
 
     /**
-     * Retrieve motion detections between images.
+     * Analyze uploaded images.
      *
-     * @param request   Motion detection request
-     * @param mediaType Content type (png, jpeg, ...)
-     * @param imageData Image data
-     * @return A response object or null
+     * @param cameraName Camera name
+     * @param mediaType  Content type (image/png, image/jpeg, ...)
+     * @param imageData  Image data
+     * @return Response object
      */
-    public ResponseEntity<ImageAnalyzeResponse> motionDetectionRequest(ImageAnalyzeRequest request,
-                                                                       String mediaType, byte[] imageData) {
-        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
-        parts.add("file", new ByteArrayResource(imageData) {
+    public ResponseEntity<ImageAnalyzeResponse> analyzeImage(String cameraName, String mediaType, byte[] imageData) {
+        HttpHeaders partHeaders = new HttpHeaders();
+        partHeaders.setContentType(MediaType.parseMediaType(mediaType));
+       MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        HttpEntity<Resource> partEntity = new HttpEntity<>(new ByteArrayResource(imageData) {
             @Override
             public String getFilename() {
-                return "image.png";
+                return "image";
             }
-        });
+        }, partHeaders);
+        parts.add("file", partEntity);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(parts, headers);
@@ -62,6 +65,6 @@ public class ImageAnalyzeService {
                 serviceUrl + "/image-analyze-request/{cameraName}",
                 HttpMethod.POST, entity,
                 ImageAnalyzeResponse.class,
-                request.getCameraName());
+                cameraName);
     }
 }
