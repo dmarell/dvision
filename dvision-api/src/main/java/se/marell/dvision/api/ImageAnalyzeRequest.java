@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MotionDetectionRequest {
+public class ImageAnalyzeRequest {
     private String cameraName;
 }

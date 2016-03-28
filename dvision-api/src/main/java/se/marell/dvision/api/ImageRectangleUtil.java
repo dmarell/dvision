@@ -52,4 +52,14 @@ public final class ImageRectangleUtil {
         }
         return false;
     }
+
+    public static List<ImageRectangle> filterByIntersection(List<ImageRectangle> areas, ImageRectangle detectionArea) {
+        List<ImageRectangle> result = new ArrayList<>();
+        for (ImageRectangle a : areas) {
+            if (a.intersect(detectionArea)) {
+                result.add(a);
+            }
+        }
+        return result;
+    }
 }

@@ -13,10 +13,10 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import se.marell.dvision.api.MotionDetectionRequest;
-import se.marell.dvision.api.MotionDetectionResponse;
+import se.marell.dvision.api.ImageAnalyzeRequest;
+import se.marell.dvision.api.ImageAnalyzeResponse;
 import se.marell.dvision.client.DVisionSpringConfig;
-import se.marell.dvision.client.MotionDetectionService;
+import se.marell.dvision.client.ImageAnalyzeService;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -27,39 +27,39 @@ import static org.hamcrest.core.IsNull.nullValue;
 @SpringApplicationConfiguration(classes = {Application.class, DVisionSpringConfig.class})
 @WebIntegrationTest({"server.port=23465"})
 @TestPropertySource(properties = "dvision.baseurl=http://localhost:23465")
-public class MotionDetectionControllerIT {
+public class ImageAnalyzeControllerIT {
     @Autowired
     private AutowireCapableBeanFactory beanFactory;
 
     @Test
     public void shouldDetectMotion() throws Exception {
-        MotionDetectionService service = beanFactory.createBean(MotionDetectionService.class);
+        ImageAnalyzeService service = beanFactory.createBean(ImageAnalyzeService.class);
         byte[] image1Bytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/image1.png"));
         byte[] image2Bytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/image2.png"));
 
         {
-            ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
-                    new MotionDetectionRequest("cam1"),
+            ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
+                    new ImageAnalyzeRequest("cam1"),
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
             assertThat(r.getBody(), nullValue());
         }
         {
-            ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
-                    new MotionDetectionRequest("cam1"),
+            ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
+                    new ImageAnalyzeRequest("cam1"),
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
             assertThat(r.getBody(), nullValue());
         }
         {
-            ResponseEntity<MotionDetectionResponse> r = service.motionDetectionRequest(
-                    new MotionDetectionRequest("cam1"),
+            ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
+                    new ImageAnalyzeRequest("cam1"),
                     "image/png",
                     image2Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
-            assertThat(r.getBody().getAreas().size(), greaterThan(0));
+            assertThat(r.getBody().getMotionAreas().size(), greaterThan(0));
             assertThat(r.getBody().getImageSize().getWidth(), is(640));
             assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }

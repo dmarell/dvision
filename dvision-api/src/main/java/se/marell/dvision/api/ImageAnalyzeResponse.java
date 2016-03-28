@@ -12,9 +12,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MotionDetectionResponse {
+public class ImageAnalyzeResponse {
     private long timestamp;
     private ImageSize imageSize;
-    private List<ImageRectangle> areas;
+    private List<ImageRectangle> motionAreas;
 }
 

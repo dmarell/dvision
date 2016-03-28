@@ -11,14 +11,14 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import se.marell.dvision.api.MotionDetectionRequest;
-import se.marell.dvision.api.MotionDetectionResponse;
+import se.marell.dvision.api.ImageAnalyzeRequest;
+import se.marell.dvision.api.ImageAnalyzeResponse;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 @Service
-public class MotionDetectionService {
+public class ImageAnalyzeService {
     @Autowired
     private Environment environment;
 
@@ -46,8 +46,8 @@ public class MotionDetectionService {
      * @param imageData Image data
      * @return A response object or null
      */
-    public ResponseEntity<MotionDetectionResponse> motionDetectionRequest(MotionDetectionRequest request,
-                                                                          String mediaType, byte[] imageData) {
+    public ResponseEntity<ImageAnalyzeResponse> motionDetectionRequest(ImageAnalyzeRequest request,
+                                                                       String mediaType, byte[] imageData) {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
         parts.add("file", new ByteArrayResource(imageData) {
             @Override
@@ -59,9 +59,9 @@ public class MotionDetectionService {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(parts, headers);
         return restTemplate.exchange(
-                serviceUrl + "/motion-detection-request/{cameraName}",
+                serviceUrl + "/image-analyze-request/{cameraName}",
                 HttpMethod.POST, entity,
-                MotionDetectionResponse.class,
+                ImageAnalyzeResponse.class,
                 request.getCameraName());
     }
 }
