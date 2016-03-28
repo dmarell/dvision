@@ -6,7 +6,7 @@ from JavaCV/OpenCV.
 ### Release notes
 * Version 2.0.0 - 2016-03-28
    * Heavily simplified: Do not store images, do not access cameras - client uploads all images. Motion detection result
-    is filtred by client (areaSizeThreshold, minAreaSize, detectionAreas).
+    is filtred by client (areaSizeThreshold, minAreaSize, detectionAreas). Added face detection.
 * Version 1.0.6 - 2016-03-21
    * Updated dvesta in order to get log-level endpoints
 * Version 1.0.5 - 2016-03-16
@@ -18,9 +18,9 @@ from JavaCV/OpenCV.
 
 ## API usage
 
-Call requestMotionDetection with information of camera name, thresholds and areas of interest in the image, and the image.
-Next, call the same request again with another image. The response is motion between the two requests, or null if
-no motion was detected.
+Call image-analyze-request along with the image to analyze.
+Next, call the same request again with another image. The response contains motion between the two requests and detected
+faces.
 
 ## Build and run
 
