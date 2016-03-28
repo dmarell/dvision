@@ -43,7 +43,10 @@ public class ImageAnalyzeControllerIT {
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
-            assertThat(r.getBody(), nullValue());
+            assertThat(r.getBody().getMotionAreas().size(), is(0));
+            assertThat(r.getBody().getFaceAreas().size(), is(0));
+            assertThat(r.getBody().getImageSize().getWidth(), is(640));
+            assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }
         {
             ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
@@ -51,7 +54,10 @@ public class ImageAnalyzeControllerIT {
                     "image/png",
                     image1Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
-            assertThat(r.getBody(), nullValue());
+            assertThat(r.getBody().getMotionAreas().size(), is(0));
+            assertThat(r.getBody().getFaceAreas().size(), is(0));
+            assertThat(r.getBody().getImageSize().getWidth(), is(640));
+            assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }
         {
             ResponseEntity<ImageAnalyzeResponse> r = service.motionDetectionRequest(
@@ -60,6 +66,7 @@ public class ImageAnalyzeControllerIT {
                     image2Bytes);
             assertThat(r.getStatusCode().is2xxSuccessful(), is(true));
             assertThat(r.getBody().getMotionAreas().size(), greaterThan(0));
+            assertThat(r.getBody().getFaceAreas().size(), is(1));
             assertThat(r.getBody().getImageSize().getWidth(), is(640));
             assertThat(r.getBody().getImageSize().getHeight(), is(480));
         }

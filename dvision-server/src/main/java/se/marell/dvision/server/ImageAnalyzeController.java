@@ -15,10 +15,7 @@ import se.marell.dvision.api.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class ImageAnalyzeController {
@@ -35,23 +32,27 @@ public class ImageAnalyzeController {
         ImageAnalyzeRequest request = new ImageAnalyzeRequest(cameraName);
         Slot slot = slots.get(request.getCameraName());
         ImageData image = new ImageData("image/png", Base64.getEncoder().encodeToString(file.getBytes()));
+        BufferedImage bImage = ImageData.createBufferedImage(image);
+        ImageAnalyzeResponse emptyResponse = new ImageAnalyzeResponse(System.currentTimeMillis(),
+                new ImageSize(bImage.getWidth(), bImage.getHeight()), new ArrayList<>(), new ArrayList<>());
         if (slot == null) {
             slots.put(request.getCameraName(), new Slot(request, image));
-            return null;
+            return new ResponseEntity<>(emptyResponse, HttpStatus.OK);
         }
 
         // Search for motion between image in slot and image in request
-        ImageAnalyzeResponse response = analyzeImage(slot, ImageData.createBufferedImage(image), ImageData.createBufferedImage(slot.image));
+        ImageAnalyzeResponse response = analyzeImage(slot, bImage, ImageData.createBufferedImage(slot.image));
         slot.image = image;
         if (response.getMotionAreas().isEmpty()) {
-            return null;
+            return new ResponseEntity<>(emptyResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private ImageAnalyzeResponse analyzeImage(Slot slot, BufferedImage image1, BufferedImage image2) {
         log.debug("Camera {}, analyzing image", slot.request.getCameraName());
-        List<ImageRectangle> areas = slot.detector.getMotionAreas(image1, image2);
+        List<ImageRectangle> motionAreas = slot.motionDetector.getMotionAreas(image1, image2);
+        List<ImageRectangle> faceAreas = slot.faceDetector.getFaceAreas(image1);
         ImageAnalyzeResponse response;
         try {
             slot.markedImage = ImageData.create(image1);
@@ -61,19 +62,22 @@ public class ImageAnalyzeController {
         response = new ImageAnalyzeResponse(
                 timeSource.currentTimeMillis(),
                 new ImageSize(image1.getWidth(), image1.getHeight()),
-                areas);
+                motionAreas,
+                faceAreas);
         return response;
     }
 
     private static class Slot {
         ImageAnalyzeRequest request;
         ImageData image;
-        MotionDetector detector;
+        MotionDetector motionDetector;
+        FaceDetector faceDetector;
         ImageData markedImage;
 
         public Slot(ImageAnalyzeRequest request, ImageData image) {
             this.request = request;
-            detector = new MotionDetector();
+            motionDetector = new MotionDetector();
+            faceDetector = new FaceDetector();
             this.image = image;
         }
     }

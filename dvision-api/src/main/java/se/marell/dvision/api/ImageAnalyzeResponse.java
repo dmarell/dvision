@@ -16,5 +16,6 @@ public class ImageAnalyzeResponse {
     private long timestamp;
     private ImageSize imageSize;
     private List<ImageRectangle> motionAreas;
+    private List<ImageRectangle> faceAreas;
 }
 
