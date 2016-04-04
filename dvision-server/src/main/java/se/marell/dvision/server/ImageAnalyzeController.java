@@ -24,6 +24,7 @@ import java.util.Map;
 public class ImageAnalyzeController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private Map<String/*cameraName*/, Slot> slots = new HashMap<>();
+    private FaceDetector faceDetector;
 
     @Autowired
     private TimeSource timeSource;
@@ -32,6 +33,15 @@ public class ImageAnalyzeController {
     public ResponseEntity<ImageAnalyzeResponse> postMotionDetectionRequest(
             @PathVariable String cameraName,
             @RequestParam MultipartFile file) throws IOException {
+
+        // Face detection fails in docker container:
+        // UnsatisfiedLinkError: no jniopencv_highgui in java.library.path] with root cause
+        // UnsatisfiedLinkError: /tmp/javacpp845418228960/libjniopencv_highgui.so: libgtk-x11-2.0.so.0: cannot open shared object file: No such file or directory
+        // at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+        // at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1938)
+        // at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1821)
+
+//        faceDetector = new FaceDetector();
         ImageAnalyzeRequest request = new ImageAnalyzeRequest(cameraName);
         Slot slot = slots.get(request.getCameraName());
         BufferedImage bImage = DvisionImageUtil.createBufferedImage(file.getBytes());
@@ -54,7 +64,7 @@ public class ImageAnalyzeController {
     private ImageAnalyzeResponse analyzeImage(Slot slot, BufferedImage image1, BufferedImage image2) {
         log.debug("Camera {}, analyzing image", slot.request.getCameraName());
         List<ImageRectangle> motionAreas = slot.motionDetector.getMotionAreas(image1, image2);
-        List<ImageRectangle> faceAreas = slot.faceDetector.getFaceAreas(image1);
+        List<ImageRectangle> faceAreas = new ArrayList<>(); // faceDetector.getFaceAreas(image1);//TODO restore
         ImageAnalyzeResponse response;
         slot.markedImage = image1;
         response = new ImageAnalyzeResponse(
@@ -69,13 +79,11 @@ public class ImageAnalyzeController {
         ImageAnalyzeRequest request;
         BufferedImage image;
         MotionDetector motionDetector;
-        FaceDetector faceDetector;
         BufferedImage markedImage;
 
         public Slot(ImageAnalyzeRequest request, BufferedImage image) {
             this.request = request;
             motionDetector = new MotionDetector();
-            faceDetector = new FaceDetector();
             this.image = image;
         }
     }

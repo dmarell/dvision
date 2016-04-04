@@ -1,7 +1,6 @@
 #!/bin/bash
 apiuser=$1
 apipassword=$2
-apibaseurl=$3
 
 set -ex
 docker build -t dvision-server dvision-server/target

@@ -4,6 +4,8 @@ Spring Boot REST server implementing a motion detector for network cameras. Uses
 from JavaCV/OpenCV.
 
 ### Release notes
+* Version 2.2.1 - 2016-04-04
+   * Removed face detection until I figure out why it woes not work in docker container.
 * Version 2.2.0 - 2016-03-28
    * Simplified client API
 * Version 2.0.0 - 2016-03-28
@@ -17,6 +19,24 @@ from JavaCV/OpenCV.
    * Renamed config parameter prefix from motion-detection-service to dvision
 * Version 1.0.1 - 2015-07-19
    * First release
+
+### Maven usage
+
+```
+    <repositories>
+      <repository>
+        <id>marell</id>
+        <url>http://marell.se/artifactory/libs-release</url>
+      </repository>
+    </repositories>
+...
+    <dependency>
+        <groupId>se.marell.dvision</groupId>
+        <artifactId>dvision-client</artifactId>
+        <version>2.2.0</version>
+    </dependency>
+```
+
 
 ## API usage
 
@@ -54,7 +74,7 @@ Configuration for different profiles are in application.yaml.
 
 ## Example request/response
 
-HTTP POST http://localhost:14562/image-analyze-request/cam1
+HTTP POST http://localhost:8080/image-analyze-request/cam1
 
 Request body is a multipart request with the image file.
 
