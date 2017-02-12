@@ -12,6 +12,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.imageio.ImageIO;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DVisionSpringConfig.class})
 @PropertySource("classpath:/test.properties")
@@ -23,10 +25,7 @@ public class DVisionClientTest {
     @Ignore // TODO start server, correct URLs
     @Test
     public void testName() throws Exception {
-//        service.requestMotionDetection(new ImageAnalyzeRequest(
-//                new NetworkCamera("cam1", "http://marell.se/cam1.jpg", 1000),
-//                100, 100, Arrays.asList(new ImageRectangle(0, 0, 100, 100))));
-//        ResponseEntity<ImageAnalyzeResponse> r = service.getMotionDetections("cam1", 0);
-//
+        System.out.println("response: " + service.analyzeImage("cam1", ImageIO.read(this.getClass().getResourceAsStream("/image1.png"))).toString());
+        System.out.println("response: " + service.analyzeImage("cam1", ImageIO.read(this.getClass().getResourceAsStream("/image2.png"))).toString());
     }
 }

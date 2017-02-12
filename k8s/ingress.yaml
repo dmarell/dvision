@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dvision-ingress
+#  annotations:
+#    kubernetes.io/ingress.allow-http: "false"
+spec:
+#  tls:
+#  - secretName: tls
+  backend:
+    serviceName: dvision-server
+    servicePort: 8080

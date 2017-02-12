@@ -4,6 +4,8 @@ Spring Boot REST server implementing a motion detector for network cameras. Uses
 from JavaCV/OpenCV.
 
 ### Release notes
+* Version 2.2.2 - 2016-04-04
+   * Upgraded JavaCV to 1.3.1 and restored face detection.
 * Version 2.2.1 - 2016-04-04
    * Removed face detection until I figure out why it woes not work in docker container.
 * Version 2.2.0 - 2016-03-28
@@ -26,7 +28,7 @@ from JavaCV/OpenCV.
     <repositories>
       <repository>
         <id>marell</id>
-        <url>http://marell.se/artifactory/libs-release</url>
+        <url>http://artifactory.caglabs.se/artifactory/libs-release</url>
       </repository>
     </repositories>
 ...

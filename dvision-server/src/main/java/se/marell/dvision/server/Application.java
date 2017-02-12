@@ -25,12 +25,9 @@ public class Application {
         if (System.getProperty("spring.profiles.active") == null) {
             app.setAdditionalProfiles("local");
         }
-        app.addListeners(new ApplicationListener<ApplicationEnvironmentPreparedEvent>() {
-            @Override
-            public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
-                logger.info("AppVersion: " + BuildInfo.getAppVersion());
-                logger.info("RunEnvironment: " + RunEnvironment.getCurrentEnvironment(event.getEnvironment()));
-            }
+        app.addListeners((ApplicationListener<ApplicationEnvironmentPreparedEvent>) event -> {
+            logger.info("AppVersion: " + BuildInfo.getAppVersion());
+            logger.info("RunEnvironment: " + RunEnvironment.getCurrentEnvironment(event.getEnvironment()));
         });
         app.run(args);
     }

@@ -19,8 +19,8 @@ public class MotionDetector {
     public List<ImageRectangle> getMotionAreas(BufferedImage bImage1, BufferedImage bImage2) {
         List<ImageRectangle> result = new ArrayList<>();
 
-        opencv_core.IplImage image1 = opencv_core.IplImage.createFrom(bImage1);
-        opencv_core.IplImage image2 = opencv_core.IplImage.createFrom(bImage2);
+        opencv_core.IplImage image1 = CvUtil.toIplImage(bImage1);
+        opencv_core.IplImage image2 = CvUtil.toIplImage(bImage2);
 
         opencv_core.CvMemStorage storage = opencv_core.CvMemStorage.create();
         cvClearMemStorage(storage);

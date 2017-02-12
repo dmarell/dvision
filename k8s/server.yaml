@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dvision-server
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: api-port
+  selector:
+    name: dvision-server
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dvision-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: dvision-server
+      labels:
+        name: dvision-server
+    spec:
+      containers:
+      - name: dvision-server
+        image: PLACEHOLDER_IMAGE_TAG
+        env:
+        - name: NODE_ENV
+          value: PLACEHOLDER_NODE_ENV
+        - name: VERSION
+          value: PLACEHOLDER_VERSION
+        - name: DEPLOY_TIMESTAMP
+          value: PLACEHOLDER_DEPLOY_TIMESTAMP
+        resources:
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: api-port

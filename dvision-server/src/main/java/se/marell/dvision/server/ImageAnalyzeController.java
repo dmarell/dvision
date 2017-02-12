@@ -41,7 +41,7 @@ public class ImageAnalyzeController {
         // at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1938)
         // at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1821)
 
-//        faceDetector = new FaceDetector();
+        faceDetector = new FaceDetector();
         ImageAnalyzeRequest request = new ImageAnalyzeRequest(cameraName);
         Slot slot = slots.get(request.getCameraName());
         BufferedImage bImage = DvisionImageUtil.createBufferedImage(file.getBytes());
@@ -64,14 +64,15 @@ public class ImageAnalyzeController {
     private ImageAnalyzeResponse analyzeImage(Slot slot, BufferedImage image1, BufferedImage image2) {
         log.debug("Camera {}, analyzing image", slot.request.getCameraName());
         List<ImageRectangle> motionAreas = slot.motionDetector.getMotionAreas(image1, image2);
-        List<ImageRectangle> faceAreas = new ArrayList<>(); // faceDetector.getFaceAreas(image1);//TODO restore
+        List<LabeledRectangle> faces = faceDetector.getFaces(image1);
         ImageAnalyzeResponse response;
         slot.markedImage = image1;
         response = new ImageAnalyzeResponse(
                 timeSource.currentTimeMillis(),
                 new ImageSize(image1.getWidth(), image1.getHeight()),
                 motionAreas,
-                faceAreas);
+                faces);
+        log.debug("Camera {}, found motion areas: {}", slot.request.getCameraName(), motionAreas.size());
         return response;
     }
 
