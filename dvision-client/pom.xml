@@ -6,7 +6,7 @@
     <parent>
         <groupId>se.marell.dvision</groupId>
         <artifactId>dvision-parent</artifactId>
-        <version>5</version>
+        <version>1-SNAPSHOT</version>
     </parent>
 
     <artifactId>dvision-client</artifactId>
