@@ -29,6 +29,11 @@ public class ImageAnalyzeController {
     @Autowired
     private TimeSource timeSource;
 
+    @RequestMapping("/")
+    public String getHealthcheck() {
+        return "{message: 'dvision'}";
+    }
+
     @RequestMapping(value = "/image-analyze-request/{cameraName}", method = RequestMethod.POST)
     public ResponseEntity<ImageAnalyzeResponse> postMotionDetectionRequest(
             @PathVariable String cameraName,
