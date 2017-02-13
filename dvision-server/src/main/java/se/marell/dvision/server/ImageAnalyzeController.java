@@ -39,13 +39,6 @@ public class ImageAnalyzeController {
             @PathVariable String cameraName,
             @RequestParam MultipartFile file) throws IOException {
 
-        // Face detection fails in docker container:
-        // UnsatisfiedLinkError: no jniopencv_highgui in java.library.path] with root cause
-        // UnsatisfiedLinkError: /tmp/javacpp845418228960/libjniopencv_highgui.so: libgtk-x11-2.0.so.0: cannot open shared object file: No such file or directory
-        // at java.lang.ClassLoader$NativeLibrary.load(Native Method)
-        // at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1938)
-        // at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1821)
-
         faceDetector = new FaceDetector();
         ImageAnalyzeRequest request = new ImageAnalyzeRequest(cameraName);
         Slot slot = slots.get(request.getCameraName());
@@ -54,6 +47,10 @@ public class ImageAnalyzeController {
                 new ImageSize(bImage.getWidth(), bImage.getHeight()), new ArrayList<>(), new ArrayList<>());
         if (slot == null) {
             slots.put(request.getCameraName(), new Slot(request, bImage));
+            return new ResponseEntity<>(emptyResponse, HttpStatus.OK);
+        }
+        if (slot.image.getHeight() != bImage.getHeight() || slot.image.getWidth() != bImage.getWidth()) {
+            slot.image = bImage; // Cannot compare
             return new ResponseEntity<>(emptyResponse, HttpStatus.OK);
         }
 
