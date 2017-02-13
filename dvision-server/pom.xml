@@ -6,7 +6,7 @@
     <parent>
         <groupId>se.marell.dvision</groupId>
         <artifactId>dvision-parent</artifactId>
-        <version>7</version>
+        <version>8</version>
     </parent>
 
     <artifactId>dvision-server</artifactId>
@@ -33,12 +33,12 @@
         <dependency>
             <groupId>se.marell.dvision</groupId>
             <artifactId>dvision-api</artifactId>
-            <version>7</version>
+            <version>8</version>
         </dependency>
         <dependency>
             <groupId>se.marell.dvision</groupId>
             <artifactId>dvision-client</artifactId>
-            <version>7</version>
+            <version>8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -128,7 +128,6 @@
     </profiles>
 
     <build>
-        <finalName>dvision-server</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
