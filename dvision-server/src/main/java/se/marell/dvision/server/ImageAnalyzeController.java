@@ -63,18 +63,16 @@ public class ImageAnalyzeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private ImageAnalyzeResponse analyzeImage(Slot slot, BufferedImage image1, BufferedImage image2) {
+    private ImageAnalyzeResponse analyzeImage(Slot slot, BufferedImage newImage, BufferedImage prevImage) {
         log.debug("Camera {}, analyzing image", slot.request.getCameraName());
-        List<ImageRectangle> motionAreas = slot.motionDetector.getMotionAreas(image1, image2);
-        List<LabeledRectangle> faces = faceDetector.getFaces(image1);
-        ImageAnalyzeResponse response;
-        slot.markedImage = image1;
-        response = new ImageAnalyzeResponse(
+        List<ImageRectangle> motionAreas = slot.motionDetector.getMotionAreas(newImage, prevImage);
+        List<LabeledRectangle> faces = faceDetector.getFaces(newImage);
+        ImageAnalyzeResponse response = new ImageAnalyzeResponse(
                 timeSource.currentTimeMillis(),
-                new ImageSize(image1.getWidth(), image1.getHeight()),
+                new ImageSize(newImage.getWidth(), newImage.getHeight()),
                 motionAreas,
                 faces);
-        log.debug("Camera {}, found motion areas: {}", slot.request.getCameraName(), motionAreas.size());
+        log.debug("Camera {}, found motion areas: {}, faces: {}", slot.request.getCameraName(), motionAreas.size(), faces.size());
         return response;
     }
 
@@ -82,7 +80,6 @@ public class ImageAnalyzeController {
         ImageAnalyzeRequest request;
         BufferedImage image;
         MotionDetector motionDetector;
-        BufferedImage markedImage;
 
         public Slot(ImageAnalyzeRequest request, BufferedImage image) {
             this.request = request;

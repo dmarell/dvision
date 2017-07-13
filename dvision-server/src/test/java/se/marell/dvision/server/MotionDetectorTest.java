@@ -22,7 +22,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam1Event1() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, 100, new ImageRectangle(0, 0, 640, 480), m, "testdata/motiondetector/cam1/event1",
                 Arrays.asList(
                         "cam1-00070.png: n",
@@ -60,7 +60,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam1Event2() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, 100, new ImageRectangle(0, 0, 640, 480), m, "testdata/motiondetector/cam1/event2",
                 Arrays.asList(
                         "cam1-00148.png: n",
@@ -90,7 +90,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam2Event1() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, 100, new ImageRectangle(0, 0, 640, 480), m, "testdata/motiondetector/cam2/event1",
                 Arrays.asList(
                         "cam2-00001.png: n",
@@ -127,7 +127,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam2Event2() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(1000, 100, new ImageRectangle(0, 0, 640, 480), m, "testdata/motiondetector/cam2/event2",
                 Arrays.asList(
                         "cam2-00140.png: n",
@@ -165,7 +165,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam3Event1() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, 50, new ImageRectangle(0, 240, 300, 240), m, "testdata/motiondetector/cam3/event1",
                 Arrays.asList(
                         "cam3-00090.png: n",
@@ -189,7 +189,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam3Event2() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, 50, new ImageRectangle(0, 240, 300, 240), m, "testdata/motiondetector/cam3/event2",
                 Arrays.asList(
                         "cam3-00106.png: n",
@@ -221,7 +221,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam3Event3() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, 50, new ImageRectangle(0, 240, 300, 240), m, "testdata/motiondetector/cam3/event3",
                 Arrays.asList(
                         "cam3-00130.png: n",
@@ -285,7 +285,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam11Event1() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, 50, new ImageRectangle(0, 0, 640, 480), m, "testdata/motiondetector/cam11/event1",
                 Arrays.asList(
                         "cam11-00080.png: n",
@@ -313,7 +313,7 @@ public class MotionDetectorTest {
 
     @Test
     public void testCam11Event2() throws Exception {
-        SampleMotionDetector m = new SampleMotionDetector();
+        MotionDetector m = new MotionDetector();
         testCamEvent(50, 50, new ImageRectangle(0, 0, 640, 480), m, "testdata/motiondetector/cam11/event2",
                 Arrays.asList(
                         "cam11-00134.png: n",
@@ -345,7 +345,7 @@ public class MotionDetectorTest {
                 ));
     }
 
-    private void testCamEvent(int minAreaSize, int areaSizeThreshold, ImageRectangle detectionArea, SampleMotionDetector m, String path, List<String> expected) throws IOException {
+    private void testCamEvent(int minAreaSize, int areaSizeThreshold, ImageRectangle detectionArea, MotionDetector m, String path, List<String> expected) throws IOException {
         List<ImageResult> actualResult = detectMotion(m, new File(path));
         //printMotionResult(actualResult);
         for (int i = 0; i < expected.size(); ++i) {
@@ -380,7 +380,7 @@ public class MotionDetectorTest {
         return area;
     }
 
-    private List<ImageResult> detectMotion(SampleMotionDetector m, File dir) throws IOException {
+    private List<ImageResult> detectMotion(MotionDetector m, File dir) throws IOException {
         List<ImageResult> result = new ArrayList<>();
         File[] files = dir.listFiles();
         if (files != null) {

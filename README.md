@@ -4,6 +4,8 @@ Spring Boot REST server implementing a motion detector for network cameras. Uses
 from JavaCV/OpenCV.
 
 ### Release notes
+* Version 2.2.6 - 2017-07-13
+   * Upgraded Spring Boot to 1.5.4.
 * Version 2.2.2 - 2016-04-04
    * Upgraded JavaCV to 1.3.1 and restored face detection.
 * Version 2.2.1 - 2016-04-04

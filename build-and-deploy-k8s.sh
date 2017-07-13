@@ -1,4 +1,7 @@
-buildNumber=8
-mvn versions:set -DnewVersion=${buildNumber} clean install
-bash deploy-k8s.sh ${buildNumber}
-#bash deploy.sh ${buildNumber} 192.168.100.144
+#!/usr/bin/env bash
+set -e
+version=2.2.7
+mvn versions:set -DnewVersion=${version}
+mvn clean package
+bash deploy-k8s.sh ${version}
+#bash deploy.sh ${version} 192.168.100.144
