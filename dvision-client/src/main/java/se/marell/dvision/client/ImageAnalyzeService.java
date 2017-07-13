@@ -4,7 +4,7 @@
 package se.marell.dvision.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import se.marell.dvision.api.DvisionImageUtil;
 import se.marell.dvision.api.ImageAnalyzeResponse;
 
@@ -27,7 +28,10 @@ public class ImageAnalyzeService {
 
     private String serviceUrl;
 
-    private TestRestTemplate restTemplate;
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private RestTemplateBuilder restTemplateBuilder;
 
     @PostConstruct
     public void init() {
@@ -35,9 +39,9 @@ public class ImageAnalyzeService {
         String apiuser = environment.getProperty("dvision.apiuser");
         String apipassword = environment.getProperty("dvision.apipassword");
         if (apiuser != null && apipassword != null) {
-            restTemplate = new TestRestTemplate(apiuser, apipassword);
+            restTemplate = restTemplateBuilder.basicAuthorization(apiuser, apipassword).build();
         } else {
-            restTemplate = new TestRestTemplate();
+            restTemplate = restTemplateBuilder.build();
         }
     }
 

@@ -7,8 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,11 +21,14 @@ import java.awt.image.BufferedImage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {Application.class, DVisionSpringConfig.class})
-@WebIntegrationTest({"server.port=23465"})
-@TestPropertySource(properties = "dvision.baseurl=http://localhost:23465")
+@SpringBootTest(classes = {Application.class, DVisionSpringConfig.class},
+        properties="server.port=23465", webEnvironment = DEFINED_PORT)
+@TestPropertySource(properties = {
+        "dvision.baseurl=http://localhost:23465"
+})
 public class ImageAnalyzeControllerIT {
     @Autowired
     private AutowireCapableBeanFactory beanFactory;
