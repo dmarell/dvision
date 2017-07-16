@@ -24,7 +24,7 @@ import java.util.Map;
 public class ImageAnalyzeController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private Map<String/*cameraName*/, Slot> slots = new HashMap<>();
-    private FaceDetector faceDetector;
+    private FaceDetector faceDetector = new FaceDetector();
 
     @Autowired
     private TimeSource timeSource;
@@ -39,7 +39,6 @@ public class ImageAnalyzeController {
             @PathVariable String cameraName,
             @RequestParam MultipartFile file) throws IOException {
 
-        faceDetector = new FaceDetector();
         ImageAnalyzeRequest request = new ImageAnalyzeRequest(cameraName);
         Slot slot = slots.get(request.getCameraName());
         BufferedImage bImage = DvisionImageUtil.createBufferedImage(file.getBytes());

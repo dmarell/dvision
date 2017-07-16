@@ -16,11 +16,13 @@ import static org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 public class MotionDetector {
+    private CvConverter cvConverter = new CvConverter();
+
     public List<ImageRectangle> getMotionAreas(BufferedImage bImage1, BufferedImage bImage2) {
         List<ImageRectangle> result = new ArrayList<>();
 
-        opencv_core.IplImage image1 = CvUtil.toIplImage(bImage1);
-        opencv_core.IplImage image2 = CvUtil.toIplImage(bImage2);
+        opencv_core.IplImage image1 = cvConverter.toIplImage(bImage1);
+        opencv_core.IplImage image2 = cvConverter.toIplImage(bImage2);
 
         opencv_core.CvMemStorage storage = opencv_core.CvMemStorage.create();
         cvClearMemStorage(storage);
@@ -56,10 +58,20 @@ public class MotionDetector {
                             (int) (cvbox.center().y() - (h / 2)),
                             w, h);
                     result.add(rectangle);
+                    // cvbox.deallocate();
                 }
             }
             contour = contour.h_next();
         }
+
+//        image1.release();
+//        image2.release();
+//        if (contour != null) contour.deallocate();
+//        diffImage.release();
+//        image1Gray.release();
+//        image2Gray.release();
+//        storage.release();
+
         return result;
     }
 }
