@@ -39,8 +39,8 @@ public class MemoryLeakIT {
         BufferedImage image2 = ImageIO.read(this.getClass().getResourceAsStream("/image2.png"));
 
         // Useful values: 1000 for testing many. Commit with 10 otherwise the test will take too long
-        // Run with -Xmx165m, debug with more, perhaps 230 MB
-        final int numTimes = 100;
+        // Run with a low amount, perhaps -Xmx165m, debug with more, perhaps 230 MB
+        final int numTimes = 10;
         for (int count = 0; count < numTimes; ++count) {
             {
                 ResponseEntity<ImageAnalyzeResponse> r = service.analyzeImage("cam1", image1);

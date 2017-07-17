@@ -58,19 +58,10 @@ public class MotionDetector {
                             (int) (cvbox.center().y() - (h / 2)),
                             w, h);
                     result.add(rectangle);
-                    // cvbox.deallocate();
                 }
             }
             contour = contour.h_next();
         }
-
-//        image1.release();
-//        image2.release();
-//        if (contour != null) contour.deallocate();
-//        diffImage.release();
-//        image1Gray.release();
-//        image2Gray.release();
-//        storage.release();
 
         return result;
     }
