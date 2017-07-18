@@ -11,7 +11,6 @@
     <modules>
         <module>dvision-api</module>
         <module>dvision-client</module>
-        <module>dvision-server</module>
     </modules>
 
     <scm>

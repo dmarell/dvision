@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +16,5 @@ import java.util.List;
 public class ImageAnalyzeResponse {
     private long timestamp;
     private ImageSize imageSize;
-    private List<ImageRectangle> motionAreas;
-    private List<LabeledRectangle> faceAreas;
+    private Map<String, List<ImageRectangle>> areas;
 }
-
